@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { defineProps } from "vue";
+
 type HelloWorldProps = {
   msg: string;
 };
