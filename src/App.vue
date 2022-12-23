@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useFile } from "@/store/useFile";
-import { computed, onMounted, reactive } from "vue";
-const { files, filesByModule } = useFile();
-
-console.log(filesByModule);
+import FolderList from "@/components/FolderList.vue";
+const { filesByModule } = useFile();
 </script>
 
 <template>
-  <div :class="styles.container"></div>
+  <div :class="styles.container">
+    <FolderList />
+  </div>
 </template>
 
 <style lang="scss" module="styles">
@@ -16,44 +16,3 @@ console.log(filesByModule);
   height: 100%;
 }
 </style>
-
-<!-- const directories = computed(() => {
-    return files
-      .filter(({ path }) => {
-        return path.substring(1).split("/").length === 1;
-      })
-      .map((dir) => {
-        let subDir = files.filter(({ path }) => {
-          return path.startsWith(`${dir.path}/`);
-        });
-        let subDirectories = subDir
-          .reduce((arr, sub) => {
-            let index =
-              sub.path.replace(`${dir.path}/`, "").split("/").length - 1;
-            if (typeof arr[index] === "undefined") {
-              arr[index] = [sub];
-            } else {
-              arr[index].push(sub);
-            }
-            return arr;
-          }, [] as Directories[][])
-          .map((dir) => {
-            return dir
-              .sort((a, b) => {
-                return a.title.localeCompare(b.title);
-              })
-              .map((dir) => {
-                return {
-                  ...dir,
-                  files: dir.files?.sort((a, b) => {
-                    return a.title.localeCompare(b.title);
-                  }),
-                };
-              });
-          });
-        return {
-          ...dir,
-          ...(dir.type !== "file" && { subDirectories }),
-        };
-      });
-  }); -->
