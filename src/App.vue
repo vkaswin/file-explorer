@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { useFile } from "@/store/useFile";
+import { useStore } from "@/store/useStore";
 import FolderList from "@/components/FolderList.vue";
-const { filesByModule } = useFile();
+const { foldersList } = useStore();
+console.log(foldersList);
 </script>
 
 <template>
