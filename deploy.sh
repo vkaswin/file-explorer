@@ -16,6 +16,6 @@ git init
 git add -A
 git commit -m 'deploy'
 
-git push -f git@github.com:vkaswin/file-structure-ui-vue.git master:gh-pages
+git push -f git@github.com:vkaswin/code-editor-vue.git master:gh-pages
 
 cd -

@@ -1,4 +1,4 @@
-# file-structure-ui
+# code-editor
 
 ## Project setup
 
