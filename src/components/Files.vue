@@ -7,6 +7,12 @@ type FileProps = {
   selectedId: string | null;
 };
 
+const emit = defineEmits(["onSelect"]);
+
+const onSelect = (id: string): void => {
+  emit("onSelect", id);
+};
+
 const { files } = defineProps<FileProps>();
 </script>
 
@@ -18,6 +24,7 @@ const { files } = defineProps<FileProps>();
       tabindex="-1"
       :style="{ paddingLeft: `${gap}px` }"
       :key="id"
+      @click="onSelect(id)"
     >
       <span>{{ title }} </span>
     </div>

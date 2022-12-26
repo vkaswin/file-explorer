@@ -2,6 +2,9 @@
 import { toRefs, ref } from "vue";
 import Files from "./Files.vue";
 import { Folder as FolderType } from "@/types/Folder";
+import { useFolder } from "@/store/folder";
+import { storeToRefs } from "pinia";
+import AddFolder from "./AddFolder.vue";
 
 type FolderProps = {
   gap?: number;
@@ -9,25 +12,23 @@ type FolderProps = {
   selectedId: string | null;
 };
 
-type SelectFolder = (id: string) => void;
+const store = useFolder();
+
+const { selectedId, showOverLay } = storeToRefs(store);
+
+const { updateSelectedId } = store;
 
 const props = withDefaults(defineProps<FolderProps>(), {
   gap: 1,
 });
 
-const emit = defineEmits(["onSelect"]);
-
 const { folder, gap } = toRefs(props);
 
 const isOpen = ref(false);
 
-const selectFolder: SelectFolder = (id) => {
-  emit("onSelect", id);
-};
-
 const toggleFolder = () => {
   isOpen.value = !isOpen.value;
-  selectFolder(folder.value.id);
+  updateSelectedId(folder.value.id);
 };
 </script>
 
@@ -53,6 +54,10 @@ const toggleFolder = () => {
       </svg>
       <span>{{ folder.title }}</span>
     </div>
+    <AddFolder
+      v-if="showOverLay && selectedId === folder.id"
+      :gap="gap * 5 + 5"
+    />
     <div v-if="folder.subFolders !== undefined && isOpen">
       <Folder
         v-for="subFolder in folder.subFolders"
@@ -60,7 +65,7 @@ const toggleFolder = () => {
         :key="subFolder.id"
         :folder="subFolder"
         :selected-id="selectedId"
-        @on-select="selectFolder"
+        @on-select="updateSelectedId"
       />
     </div>
     <div :class="styles.files" v-if="isOpen">
@@ -68,6 +73,7 @@ const toggleFolder = () => {
         :gap="gap * 5 + 15"
         :files="folder.files"
         :selected-id="selectedId"
+        @on-select="updateSelectedId"
       />
     </div>
   </div>

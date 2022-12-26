@@ -9,6 +9,7 @@ import {
 
 export type State = {
   selectedId: string | null;
+  showOverLay: boolean;
   folders: Folder[];
 };
 
@@ -16,6 +17,7 @@ export const useFolder = defineStore("folder", {
   state: (): State => {
     return {
       selectedId: null,
+      showOverLay: false,
       folders: [
         {
           id: crypto.randomUUID(),
@@ -310,6 +312,9 @@ export const useFolder = defineStore("folder", {
     },
     updateSelectedId(id: string): void {
       this.selectedId = id;
+    },
+    toggleAddIcon() {
+      this.showOverLay = !this.showOverLay;
     },
   },
 });
