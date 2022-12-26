@@ -2,16 +2,54 @@
 import { Files } from "@/types/Folder";
 
 type FileProps = {
+  gap: number;
   files: Files[];
+  selectedId: string | null;
 };
 
 const { files } = defineProps<FileProps>();
 </script>
 
 <template>
-  <div class="file" v-for="{ id, path, title } in files" :key="id">
-    <span>{{ title }} | {{ path }}</span>
+  <div :class="styles.container">
+    <div
+      v-for="{ id, path, title } in files"
+      :class="[styles.title, { [styles.selected]: id === selectedId }]"
+      tabindex="-1"
+      :style="{ paddingLeft: `${gap}px` }"
+      :key="id"
+    >
+      <span>{{ title }} </span>
+    </div>
   </div>
 </template>
 
-<style></style>
+<style lang="scss" module="styles">
+.container {
+  display: flex;
+  flex-direction: column;
+  .title {
+    border: 1px solid;
+    border-color: #252526;
+    padding: 5px 0px;
+    user-select: none;
+    cursor: pointer;
+    &:is(.selected) {
+      background-color: #37373d;
+      border-color: #37373d;
+    }
+    &:focus {
+      background-color: #05395e;
+      border-color: #017fd4;
+    }
+    &:hover:not(:focus) {
+      background-color: #2a2d2e;
+      border-color: #2a2d2e;
+    }
+    span {
+      color: #cccccc;
+      font-size: 14px;
+    }
+  }
+}
+</style>

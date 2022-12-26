@@ -8,12 +8,14 @@ import {
 } from "@/types/Folder";
 
 export type State = {
+  selectedId: string | null;
   folders: Folder[];
 };
 
 export const useFolder = defineStore("folder", {
   state: (): State => {
     return {
+      selectedId: null,
       folders: [
         {
           id: crypto.randomUUID(),
@@ -153,7 +155,7 @@ export const useFolder = defineStore("folder", {
         },
         {
           id: crypto.randomUUID(),
-          title: "Hello",
+          title: "Bye",
           path: "/src/Test/Demo/Hello/Bye",
           files: [
             {
@@ -170,7 +172,7 @@ export const useFolder = defineStore("folder", {
         },
         {
           id: crypto.randomUUID(),
-          title: "Hello",
+          title: "World",
           path: "/src/Test/Demo/World",
           files: [
             {
@@ -187,7 +189,7 @@ export const useFolder = defineStore("folder", {
         },
         {
           id: crypto.randomUUID(),
-          title: "Hello",
+          title: "Demo",
           path: "/src/World/Demo",
           files: [
             {
@@ -305,6 +307,9 @@ export const useFolder = defineStore("folder", {
       let folders = this.folders;
       let index = folders.findIndex(({ id }) => id === folderId);
       folders.splice(index, 1);
+    },
+    updateSelectedId(id: string): void {
+      this.selectedId = id;
     },
   },
 });
