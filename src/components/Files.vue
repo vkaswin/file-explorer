@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Files } from "@/types/Folder";
+import { getFileIcon } from "@/helper";
 
 type FileProps = {
   gap: number;
@@ -22,6 +23,7 @@ const { files } = defineProps<FileProps>();
       :key="id"
       @click="emit('onSelect', id)"
     >
+      <img :src="getFileIcon(title)" alt="Hello" />
       <span>{{ title }} </span>
     </div>
   </div>
@@ -32,6 +34,9 @@ const { files } = defineProps<FileProps>();
   display: flex;
   flex-direction: column;
   .title {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     border: 1px solid;
     border-color: #252526;
     user-select: none;
@@ -51,6 +56,10 @@ const { files } = defineProps<FileProps>();
     span {
       color: #cccccc;
       font-size: 14px;
+    }
+    img {
+      width: 14px;
+      height: 14px;
     }
   }
 }
