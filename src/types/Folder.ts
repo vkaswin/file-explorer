@@ -23,6 +23,8 @@ export type GroupFoldersByPath = (folders: Folder[]) => Folder[];
 
 export type SortFunction = <T extends { title: string }>(a: T, b: T) => number;
 
+export type AddType = "file" | "folder" | null;
+
 declare global {
   interface Crypto {
     randomUUID: () => string;

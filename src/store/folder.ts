@@ -5,11 +5,15 @@ import {
   GetRootFolder,
   GroupFoldersByPath,
   SortFunction,
+  AddType,
+  Files,
 } from "@/types/Folder";
 
 export type State = {
   selectedId: string | null;
-  showOverLay: boolean;
+  addType: AddType;
+  title: string;
+  error: string | null;
   folders: Folder[];
 };
 
@@ -17,7 +21,9 @@ export const useFolder = defineStore("folder", {
   state: (): State => {
     return {
       selectedId: null,
-      showOverLay: false,
+      addType: null,
+      title: "",
+      error: null,
       folders: [
         {
           id: crypto.randomUUID(),
@@ -285,17 +291,63 @@ export const useFolder = defineStore("folder", {
     };
   },
   getters: {
-    foldersList: (state) => {
+    foldersList: (state): Folder[] => {
       let folders = JSON.parse(JSON.stringify(state.folders));
       return groupFoldersByPath(folders);
     },
+    selectedFolder: (state): Folder | undefined => {
+      if (!state.selectedId) return;
+      return state.folders.find(({ id }) => id === state.selectedId);
+    },
+    existingFolders: (state): string[] => {
+      if (!state.selectedId) return [];
+      let folder = state.folders.find(({ id }) => id === state.selectedId);
+      if (!folder) return [];
+      return state.folders
+        .filter(
+          ({ path }) =>
+            path !== folder!.path &&
+            path.startsWith(folder!.path) &&
+            !path.substring(folder!.path.length + 1).includes("/")
+        )
+        .map(({ title }) => title.toLocaleLowerCase());
+    },
+    existingFiles: (state): string[] => {
+      if (!state.selectedId) return [];
+      let folder = state.folders.find(({ id }) => id === state.selectedId);
+      if (!folder) return [];
+      return folder.files.map(({ title }) => title.toLocaleLowerCase());
+    },
   },
   actions: {
-    createFolder(folder: Folder): void {
-      let folders = this.folders;
-      folders.push(folder);
+    createFolder() {
+      if (this.error !== null) return;
+      let folder: Folder = {
+        files: [],
+        id: crypto.randomUUID(),
+        title: this.title,
+        path: this.selectedFolder
+          ? `${this.selectedFolder.path}/${this.title}`
+          : `/${this.title}`,
+      };
+      this.folders.push(folder);
+      this.updateAddType();
     },
-    updateFolder(folderId: string, folder: Folder): void {
+    createFile() {
+      if (this.error !== null) return;
+      let file: Files = {
+        id: crypto.randomUUID(),
+        title: this.title,
+        path: this.selectedFolder
+          ? `${this.selectedFolder.path}/${this.title}`
+          : this.title,
+      };
+      let index = this.folders.findIndex(({ id }) => id === this.selectedId);
+      if (index === -1) return;
+      this.folders[index].files.push(file);
+      this.updateAddType();
+    },
+    updateFolder(folderId: string, folder: Folder) {
       let folders = this.folders;
       let index = folders.findIndex(({ id }) => id === folderId);
       let subFolders = folders[index].subFolders;
@@ -305,16 +357,24 @@ export const useFolder = defineStore("folder", {
         subFolders = [folder];
       }
     },
-    deleteFolder(folderId: string): void {
+    deleteFolder(folderId: string) {
       let folders = this.folders;
       let index = folders.findIndex(({ id }) => id === folderId);
       folders.splice(index, 1);
     },
-    updateSelectedId(id: string): void {
+    updateSelectedId(id: string) {
       this.selectedId = id;
     },
-    toggleAddIcon() {
-      this.showOverLay = !this.showOverLay;
+    updateAddType(type: AddType = null) {
+      this.addType = type;
+      if (!type) {
+        this.title = "";
+        this.error = null;
+      }
+    },
+    setError(value: string | null = null) {
+      console.log(value);
+      this.error = value;
     },
   },
 });

@@ -1,22 +1,41 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useFolder } from "@/store/folder";
+import { AddType } from "@/types/Folder";
 import Folder from "./Folder.vue";
+import AddInput from "./AddInput.vue";
+import ScrollBar from "./ScrollBar.vue";
 
-const folder = useFolder();
-const { foldersList, selectedId, showOverLay } = storeToRefs(folder);
-const { createFolder, updateFolder, deleteFolder, toggleAddIcon } = folder;
+const folderStore = useFolder();
+const { foldersList, selectedId, addType } = storeToRefs(folderStore);
+const { createFolder, updateFolder, deleteFolder, updateAddType } = folderStore;
+
+const folderRef = ref<HTMLDivElement>();
+
+const handleClickOutSide = (event: MouseEvent) => {
+  if (!folderRef.value) return;
+  let element = event.target as HTMLElement;
+  if (folderRef.value.contains(element)) return;
+  window.removeEventListener("click", handleClickOutSide);
+  updateAddType();
+};
+
+const toggleAddIcon = (type: AddType) => {
+  window.addEventListener("click", handleClickOutSide);
+  updateAddType(type);
+};
 </script>
 
 <template>
-  <div :class="styles.container">
+  <div ref="folderRef" :class="styles.container">
     <div :class="styles.header">
       <b>Vue Folder Structure</b>
       <div :class="styles.add_icon">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 16 16"
-          @click="toggleAddIcon"
+          @click="toggleAddIcon('file')"
         >
           <path
             d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z"
@@ -28,7 +47,7 @@ const { createFolder, updateFolder, deleteFolder, toggleAddIcon } = folder;
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 16 16"
-          @click="toggleAddIcon"
+          @click="toggleAddIcon('folder')"
         >
           <path
             d="m.5 3 .04.87a1.99 1.99 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2zm5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19c-.24 0-.47.042-.683.12L1.5 2.98a1 1 0 0 1 1-.98h3.672z"
@@ -45,7 +64,12 @@ const { createFolder, updateFolder, deleteFolder, toggleAddIcon } = folder;
       :folder="folder"
       :selected-id="selectedId"
     />
-    <div :class="styles.overlay" v-if="showOverLay"></div>
+    <AddInput
+      v-if="addType && selectedId === null"
+      :gap="5"
+      :add-type="addType"
+    />
+    <div :class="styles.overlay" v-if="addType"></div>
   </div>
 </template>
 
@@ -61,10 +85,7 @@ const { createFolder, updateFolder, deleteFolder, toggleAddIcon } = folder;
   height: 100%;
   overflow-y: scroll;
   &::-webkit-scrollbar {
-    width: 10px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: #515151;
+    display: none;
   }
   .header {
     display: flex;
@@ -81,11 +102,17 @@ const { createFolder, updateFolder, deleteFolder, toggleAddIcon } = folder;
       align-items: center;
       gap: 10px;
       svg {
-        width: 18px;
-        height: 18px;
         fill: #cccccc;
         user-select: none;
         cursor: pointer;
+        &:first-child {
+          width: 17px;
+          height: 17px;
+        }
+        &:last-child {
+          width: 18px;
+          height: 18px;
+        }
       }
     }
   }

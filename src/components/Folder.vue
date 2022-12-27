@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { toRefs, ref } from "vue";
+import { toRefs, ref, computed } from "vue";
 import Files from "./Files.vue";
 import { Folder as FolderType } from "@/types/Folder";
 import { useFolder } from "@/store/folder";
 import { storeToRefs } from "pinia";
-import AddFolder from "./AddFolder.vue";
+import AddInput from "./AddInput.vue";
 
 type FolderProps = {
   gap?: number;
@@ -12,11 +12,11 @@ type FolderProps = {
   selectedId: string | null;
 };
 
-const store = useFolder();
+const folderStore = useFolder();
 
-const { selectedId, showOverLay } = storeToRefs(store);
+const { selectedId, addType } = storeToRefs(folderStore);
 
-const { updateSelectedId } = store;
+const { updateSelectedId } = folderStore;
 
 const props = withDefaults(defineProps<FolderProps>(), {
   gap: 1,
@@ -30,6 +30,14 @@ const toggleFolder = () => {
   isOpen.value = !isOpen.value;
   updateSelectedId(folder.value.id);
 };
+
+const showInput = computed(() => {
+  let isSelected =
+    addType.value &&
+    (selectedId.value === folder.value.id ||
+      folder.value.files.findIndex(({ id }) => id === selectedId.value) !== -1);
+  return isSelected;
+});
 </script>
 
 <template>
@@ -54,10 +62,7 @@ const toggleFolder = () => {
       </svg>
       <span>{{ folder.title }}</span>
     </div>
-    <AddFolder
-      v-if="showOverLay && selectedId === folder.id"
-      :gap="gap * 5 + 5"
-    />
+    <AddInput v-if="showInput" :gap="gap * 5 + 5" :add-type="addType" />
     <div v-if="folder.subFolders !== undefined && isOpen">
       <Folder
         v-for="subFolder in folder.subFolders"
@@ -70,7 +75,7 @@ const toggleFolder = () => {
     </div>
     <div :class="styles.files" v-if="isOpen">
       <Files
-        :gap="gap * 5 + 15"
+        :gap="gap * 5 + 5"
         :files="folder.files"
         :selected-id="selectedId"
         @on-select="updateSelectedId"
@@ -86,7 +91,6 @@ const toggleFolder = () => {
     display: flex;
     align-items: center;
     gap: 5px;
-    padding: 5px 0px 5px 10px;
     border: 1px solid transparent;
     user-select: none;
     cursor: pointer;
@@ -107,7 +111,7 @@ const toggleFolder = () => {
     }
     svg {
       fill: #cccccc;
-      widows: 12px;
+      width: 12px;
       height: 12px;
     }
   }
