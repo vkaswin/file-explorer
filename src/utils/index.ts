@@ -78,6 +78,10 @@ export const getFileIcon = (fileName: string) => {
       icon = "react";
       break;
 
+    case "tsx":
+      icon = "react";
+      break;
+
     case "vue":
       icon = "vue";
       break;
@@ -171,4 +175,22 @@ export const getFileIcon = (fileName: string) => {
   }
 
   return require(`@/assets/file-icons/${icon}.svg`);
+};
+
+export const getScrollParent = (element: HTMLElement | null) => {
+  var style = getComputedStyle(element!);
+  var excludeStaticParent = style.position === "absolute";
+  var regex = /(auto|scroll)/;
+
+  if (style.position === "fixed") return document.body;
+
+  for (var parent = element; (parent = parent!.parentElement); ) {
+    style = getComputedStyle(parent);
+    if (excludeStaticParent && style.position === "static") continue;
+
+    if (regex.test(style.overflow + style.overflowY + style.overflowX))
+      return parent;
+  }
+
+  return document.body;
 };

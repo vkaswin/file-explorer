@@ -3,6 +3,7 @@ import { toRefs, ref, onMounted } from "vue";
 import { AddType } from "@/types/Folder";
 import { storeToRefs } from "pinia";
 import { useFolder } from "@/store/folder";
+import { getFileIcon } from "@/utils";
 
 type AddFolderProps = {
   gap?: number;
@@ -78,18 +79,7 @@ const handleEnter = () => {
         d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
       />
     </svg>
-    <svg
-      v-if="addType === 'file'"
-      width="14"
-      height="14"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 16 16"
-    >
-      <path
-        fill-rule="evenodd"
-        d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5z"
-      />
-    </svg>
+    <img v-if="addType === 'file'" :src="getFileIcon(title)" />
     <div :class="styles.field">
       <input
         ref="inputRef"
@@ -114,6 +104,10 @@ const handleEnter = () => {
   z-index: 3;
   svg {
     fill: #cccccc;
+  }
+  img {
+    width: 15px;
+    height: 15px;
   }
   .field {
     position: relative;
@@ -148,5 +142,3 @@ const handleEnter = () => {
   }
 }
 </style>
-<!--  - bg
-#ae170d - border -->

@@ -41,6 +41,42 @@ export const useFolder = defineStore("folder", {
         },
         {
           id: crypto.randomUUID(),
+          title: "node_modules",
+          path: "/node_modules",
+          files: [],
+        },
+        {
+          id: crypto.randomUUID(),
+          title: "store",
+          path: "/store",
+          files: [],
+        },
+        {
+          id: crypto.randomUUID(),
+          title: "helper",
+          path: "/helper",
+          files: [],
+        },
+        {
+          id: crypto.randomUUID(),
+          title: "components",
+          path: "/components",
+          files: [],
+        },
+        {
+          id: crypto.randomUUID(),
+          title: "dist",
+          path: "/dist",
+          files: [],
+        },
+        {
+          id: crypto.randomUUID(),
+          title: "types",
+          path: "/types",
+          files: [],
+        },
+        {
+          id: crypto.randomUUID(),
           title: "public",
           path: "/public",
           files: [

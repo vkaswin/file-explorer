@@ -58,12 +58,15 @@ const handleIcon = (type: AddType) => {
         </svg>
       </div>
     </div>
-    <Folder
-      v-for="folder in foldersList"
-      :key="folder.id"
-      :folder="folder"
-      :selected-id="selectedId"
-    />
+    <div :class="styles.wrapper">
+      <Folder
+        v-for="folder in foldersList"
+        :key="folder.id"
+        :folder="folder"
+        :selected-id="selectedId"
+      />
+      <ScrollBar />
+    </div>
     <AddInput
       v-if="addType && selectedId === null"
       :gap="5"
@@ -75,18 +78,11 @@ const handleIcon = (type: AddType) => {
 
 <style lang="scss" module="styles">
 .container {
-  position: relative;
   display: flex;
   flex-direction: column;
   background-color: #252526;
-  --folder-width: 300px;
-  width: var(--folder-width);
-  max-height: 100%;
+  width: 300px;
   height: 100%;
-  overflow-y: scroll;
-  &::-webkit-scrollbar {
-    display: none;
-  }
   .header {
     display: flex;
     justify-content: space-between;
@@ -114,6 +110,15 @@ const handleIcon = (type: AddType) => {
           height: 18px;
         }
       }
+    }
+  }
+  .wrapper {
+    position: relative;
+    max-height: 100%;
+    height: 100%;
+    overflow: auto;
+    &::-webkit-scrollbar {
+      display: none;
     }
   }
   .overlay {

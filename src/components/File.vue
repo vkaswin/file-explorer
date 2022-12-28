@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getFileIcon } from "@/helper";
+import { getFileIcon } from "@/utils";
 import { toRefs, computed } from "vue";
 
 type FileType = {

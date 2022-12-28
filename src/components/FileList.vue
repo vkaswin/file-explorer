@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import File from "./File.vue";
 import { Files } from "@/types/Folder";
-import { getFileIcon } from "@/helper";
 
 type FileProps = {
   gap: number;

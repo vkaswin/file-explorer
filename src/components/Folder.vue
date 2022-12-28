@@ -77,7 +77,7 @@ const isOpen = computed(() => {
     </div>
     <div :class="styles.files" v-if="isOpen">
       <FileList
-        :gap="gap * 5 + 5"
+        :gap="gap * 5 + 10"
         :files="folder.files"
         :selected-id="selectedId"
         @on-select="updateSelectedId"
