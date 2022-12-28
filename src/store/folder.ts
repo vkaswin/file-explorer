@@ -14,6 +14,7 @@ export type State = {
   addType: AddType;
   title: string;
   error: string | null;
+  expandedFolders: string[];
   folders: Folder[];
 };
 
@@ -24,6 +25,7 @@ export const useFolder = defineStore("folder", {
       addType: null,
       title: "",
       error: null,
+      expandedFolders: [],
       folders: [
         {
           id: crypto.randomUUID(),
@@ -331,7 +333,7 @@ export const useFolder = defineStore("folder", {
           : `/${this.title}`,
       };
       this.folders.push(folder);
-      this.updateAddType();
+      this.toggleAddIcon();
     },
     createFile() {
       if (this.error !== null) return;
@@ -345,7 +347,7 @@ export const useFolder = defineStore("folder", {
       let index = this.folders.findIndex(({ id }) => id === this.selectedId);
       if (index === -1) return;
       this.folders[index].files.push(file);
-      this.updateAddType();
+      this.toggleAddIcon();
     },
     updateFolder(folderId: string, folder: Folder) {
       let folders = this.folders;
@@ -365,16 +367,27 @@ export const useFolder = defineStore("folder", {
     updateSelectedId(id: string) {
       this.selectedId = id;
     },
-    updateAddType(type: AddType = null) {
+    toggleAddIcon(type: AddType = null) {
       this.addType = type;
       if (!type) {
         this.title = "";
         this.error = null;
+      } else {
+        if (!this.selectedId) return;
+        let isExist = this.expandedFolders.includes(this.selectedId);
+        if (!isExist) this.expandedFolders.push(this.selectedId);
       }
     },
     setError(value: string | null = null) {
-      console.log(value);
       this.error = value;
+    },
+    toggleFolder(id: string) {
+      let index = this.expandedFolders.indexOf(id);
+      if (index === -1) {
+        this.expandedFolders.push(id);
+      } else {
+        this.expandedFolders.splice(index, 1);
+      }
     },
   },
 });

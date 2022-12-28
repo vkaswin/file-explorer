@@ -9,7 +9,7 @@ import ScrollBar from "./ScrollBar.vue";
 
 const folderStore = useFolder();
 const { foldersList, selectedId, addType } = storeToRefs(folderStore);
-const { createFolder, updateFolder, deleteFolder, updateAddType } = folderStore;
+const { toggleAddIcon } = folderStore;
 
 const folderRef = ref<HTMLDivElement>();
 
@@ -18,12 +18,12 @@ const handleClickOutSide = (event: MouseEvent) => {
   let element = event.target as HTMLElement;
   if (folderRef.value.contains(element)) return;
   window.removeEventListener("click", handleClickOutSide);
-  updateAddType();
+  toggleAddIcon();
 };
 
-const toggleAddIcon = (type: AddType) => {
+const handleIcon = (type: AddType) => {
   window.addEventListener("click", handleClickOutSide);
-  updateAddType(type);
+  toggleAddIcon(type);
 };
 </script>
 
@@ -35,7 +35,7 @@ const toggleAddIcon = (type: AddType) => {
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 16 16"
-          @click="toggleAddIcon('file')"
+          @click="handleIcon('file')"
         >
           <path
             d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5z"
@@ -47,7 +47,7 @@ const toggleAddIcon = (type: AddType) => {
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 16 16"
-          @click="toggleAddIcon('folder')"
+          @click="handleIcon('folder')"
         >
           <path
             d="m.5 3 .04.87a1.99 1.99 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2zm5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19c-.24 0-.47.042-.683.12L1.5 2.98a1 1 0 0 1 1-.98h3.672z"

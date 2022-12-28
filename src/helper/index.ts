@@ -27,12 +27,41 @@ type Extension =
   | "prisma"
   | "elixir";
 
+export const extensions = [
+  "js",
+  "ts",
+  "git",
+  "vue",
+  "tsx",
+  "jsx",
+  "pdf",
+  "kt",
+  "dart",
+  "go",
+  "json",
+  "php",
+  "zip",
+  "py",
+  "rb",
+  "html",
+  "scss",
+  "c",
+  "cpp",
+  "css",
+  "swift",
+  "astro",
+  "scala",
+  "dockerfile",
+  "svelte",
+  "prisma",
+  "elixir",
+];
+
 export const getFileIcon = (fileName: string) => {
   let keys = fileName.split(".");
-  let extension = keys[keys.length - 1];
-  console.log(extension);
+  let extension = keys[keys.length - 1].toLocaleLowerCase();
   let icon: string;
-  switch (extension) {
+  switch (extension as Extension) {
     case "js":
       icon = "javascript";
       break;

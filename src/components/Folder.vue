@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRefs, ref, computed } from "vue";
+import { toRefs, computed } from "vue";
 import FileList from "./FileList.vue";
 import { Folder as FolderType } from "@/types/Folder";
 import { useFolder } from "@/store/folder";
@@ -14,9 +14,9 @@ type FolderProps = {
 
 const folderStore = useFolder();
 
-const { selectedId, addType } = storeToRefs(folderStore);
+const { selectedId, addType, expandedFolders } = storeToRefs(folderStore);
 
-const { updateSelectedId } = folderStore;
+const { updateSelectedId, toggleFolder } = folderStore;
 
 const props = withDefaults(defineProps<FolderProps>(), {
   gap: 1,
@@ -24,10 +24,8 @@ const props = withDefaults(defineProps<FolderProps>(), {
 
 const { folder, gap } = toRefs(props);
 
-const isOpen = ref(false);
-
-const toggleFolder = () => {
-  isOpen.value = !isOpen.value;
+const handleFolder = () => {
+  toggleFolder(folder.value.id);
   updateSelectedId(folder.value.id);
 };
 
@@ -38,6 +36,10 @@ const showInput = computed(() => {
       folder.value.files.findIndex(({ id }) => id === selectedId.value) !== -1);
   return isSelected;
 });
+
+const isOpen = computed(() => {
+  return expandedFolders.value.includes(folder.value.id);
+});
 </script>
 
 <template>
@@ -46,7 +48,7 @@ const showInput = computed(() => {
       :class="[styles.title, { [styles.selected]: folder.id === selectedId }]"
       :style="{ paddingLeft: `${gap * 5}px` }"
       tabindex="-1"
-      @click="toggleFolder"
+      @click="handleFolder"
     >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" v-if="isOpen">
         <path
