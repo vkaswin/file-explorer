@@ -1,9 +1,19 @@
 <script setup lang="ts">
 import FolderList from "@/components/FolderList.vue";
+import { onMounted, ref } from "vue";
+
+const isLoading = ref(true);
+
+onMounted(() => {
+  document.fonts.onloadingdone = () => {
+    isLoading.value = false;
+  };
+});
 </script>
 
 <template>
-  <div :class="styles.container">
+  <div v-if="isLoading">Loading...</div>
+  <div v-else :class="styles.container">
     <FolderList />
   </div>
 </template>

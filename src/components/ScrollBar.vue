@@ -1,19 +1,37 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { getScrollParent } from "@/utils";
 
 let scrollRef: HTMLElement | null = null;
-
-const scrollHeight = "100px";
+let parentRef: HTMLElement | null = null;
 
 onMounted(() => {
   if (!scrollRef) return;
   const parentElement = getScrollParent(scrollRef);
   if (!parentElement) return;
-  parentElement.onscroll = handleScroll;
-  parentElement.onmouseenter = handleMouseEnter;
-  parentElement.onmouseleave = handleMouseLeave;
+  parentRef = parentElement;
+  parentRef.onscroll = handleScroll;
+  parentRef.onmouseenter = handleMouseEnter;
+  parentRef.onmouseleave = handleMouseLeave;
+  handleScrollBarPositon();
+  window.addEventListener("resize", handleScrollBarPositon);
 });
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleScrollBarPositon);
+});
+
+const handleScrollBarPositon = () => {
+  if (!scrollRef || !parentRef) return;
+  let { clientWidth } = scrollRef;
+  let { scrollHeight, clientHeight, offsetTop } = parentRef;
+  let { top, left, width } = parentRef.getBoundingClientRect();
+  scrollRef.style.height = `${
+    (clientHeight / scrollHeight) * clientHeight - offsetTop
+  }px`;
+  scrollRef.style.top = `${top}px`;
+  scrollRef.style.left = `${left + width - clientWidth}px`;
+};
 
 const handleMouseEnter = () => {
   if (!scrollRef) return;
@@ -26,9 +44,9 @@ const handleMouseLeave = () => {
 };
 
 const handleScroll = (event: Event) => {
-  console.log("scroll");
-  let element = event.target as HTMLElement;
-  console.log(element);
+  if (!scrollRef || !parentRef) return;
+  let { scrollTop, offsetTop } = event.target as HTMLElement;
+  scrollRef.style.top = `${scrollTop + offsetTop}px`;
 };
 </script>
 
@@ -38,18 +56,13 @@ const handleScroll = (event: Event) => {
 
 <style lang="scss" module="styles">
 .container {
-  position: absolute;
-  top: 0px;
-  right: 0px;
+  position: fixed;
   width: 10px;
-  height: v-bind(scrollHeight);
   background-color: #515151;
+  opacity: 0;
   transition: opacity 0.2s ease-in;
 }
-.container[aria-hidden="true"] {
-  opacity: 1;
-}
-.container[aria-hidden="false"] {
-  opacity: 0;
-}
+// .container[aria-hidden="true"] {
+//   opacity: 1;
+// }
 </style>

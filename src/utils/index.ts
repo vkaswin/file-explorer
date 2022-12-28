@@ -182,7 +182,7 @@ export const getScrollParent = (element: HTMLElement | null) => {
   var excludeStaticParent = style.position === "absolute";
   var regex = /(auto|scroll)/;
 
-  if (style.position === "fixed") return document.body;
+  //   if (style.position === "fixed") return document.body;
 
   for (var parent = element; (parent = parent!.parentElement); ) {
     style = getComputedStyle(parent);
