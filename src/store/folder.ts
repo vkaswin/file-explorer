@@ -30,13 +30,13 @@ export const useFolder = defineStore("folder", {
         },
       },
       expandedFolders: [
-        "e0424902-6937-4741-aff9-02fffae995aa",
-        "fc5c2979-b629-4498-bf00-91e4087080ef",
-        "b3c4da9e-7283-464f-9eda-f864aa46f9a5",
-        "6154f081-fadd-465f-8d15-83fad5375761",
-        "653e7dd0-bd0c-4fc7-8f9c-696cd2c896c0",
-        "af36c726-6ace-4fd9-b06c-1ce6fcba4d71",
-        "213eacc6-6d95-48fb-85eb-01d400a58824",
+        // "e0424902-6937-4741-aff9-02fffae995aa",
+        // "fc5c2979-b629-4498-bf00-91e4087080ef",
+        // "b3c4da9e-7283-464f-9eda-f864aa46f9a5",
+        // "6154f081-fadd-465f-8d15-83fad5375761",
+        // "653e7dd0-bd0c-4fc7-8f9c-696cd2c896c0",
+        // "af36c726-6ace-4fd9-b06c-1ce6fcba4d71",
+        // "213eacc6-6d95-48fb-85eb-01d400a58824",
       ],
       folders: [
         {
@@ -460,19 +460,27 @@ export const useFolder = defineStore("folder", {
       }
       if (!sourceFolder || !destinationFoler) return;
 
-      console.log(sourceFolder, destinationFoler, source, destination);
-      //   if (source.type === "file") {
-      //     let index = folder.files.findIndex(({ id }) => id === source.fileId);
-
-      //     if (index !== -1) {
-      //       sourceFile = { ...folder.files[index] };
-      //       folder.files.splice(index, 1);
-      //     }
-      //   }
-      //   if (source.type === "file") {
-      //     sourceFolder.path = `${destinationFoler.path}/${sourceFolder.title}`;
-      //     destinationFoler.files.push(sourceFolder);
-      //   }
+      if (source.type === "file") {
+        let index = sourceFolder.files.findIndex(
+          ({ id }) => id === source.fileId
+        );
+        if (index === -1) return;
+        let file = { ...sourceFolder.files[index] };
+        file.path = `${destinationFoler.path}/${file.title}`;
+        sourceFolder.files.splice(index, 1);
+        destinationFoler.files.push(file);
+      } else {
+        let path = sourceFolder.path;
+        let title = sourceFolder.title;
+        for (let folder of this.folders) {
+          if (folder.path.startsWith(path)) {
+            folder.path = folder.path.replace(
+              path,
+              `${destinationFoler.path}/${title}`
+            );
+          }
+        }
+      }
       this.addFolderId(destinationFoler.id);
       this.resetDrag();
     },

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, toRefs } from "vue";
 import File from "./File.vue";
 import { Files } from "@/types/Folder";
 
@@ -7,17 +7,18 @@ type FileProps = {
   gap: number;
   files: Files[];
   selectedId: string | null;
+  dragOver: boolean;
 };
 
 const dragId = ref<string | null>(null);
 
 const emit = defineEmits(["onSelect", "onDragStart", "onDragEnter"]);
 
-const { files } = defineProps<FileProps>();
+const { files, dragOver } = defineProps<FileProps>();
 </script>
 
 <template>
-  <div :class="styles.container">
+  <div :class="[styles.container, dragOver && styles.drag_over]">
     <div
       v-for="{ id, path, title } in files"
       :class="[styles.title, { [styles.selected]: id === selectedId }]"
@@ -39,6 +40,12 @@ const { files } = defineProps<FileProps>();
 .container {
   display: flex;
   flex-direction: column;
+  &:is(.drag_over) {
+    background-color: #37373d;
+    .title {
+      border-color: #37373d;
+    }
+  }
   .title {
     display: flex;
     align-items: center;

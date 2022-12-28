@@ -30,6 +30,8 @@ const props = withDefaults(defineProps<FolderProps>(), {
 
 const isDragging = ref(false);
 
+const dragOver = ref(false);
+
 const { folder, gap } = toRefs(props);
 
 const styles = useCssModule("styles");
@@ -60,10 +62,19 @@ const handleDragEnter = () => {
     folderId: folder.value.id,
   });
 };
+
+const dragEnter = () => {
+  dragOver.value = true;
+  addFolderId(folder.value.id);
+};
 </script>
 
 <template>
-  <div :class="styles.container">
+  <div
+    :class="[styles.container, dragOver && styles.drag_over]"
+    @dragenter="dragEnter"
+    @dragleave="dragOver = false"
+  >
     <div
       :class="[styles.title, { [styles.selected]: folder.id === selectedId }]"
       :style="{ paddingLeft: `${gap * 5}px` }"
@@ -72,7 +83,7 @@ const handleDragEnter = () => {
       @mousedown="isDragging = true"
       @click="handleFolder"
       @dragstart="handleDragStart('folder')"
-      @dragenter="handleDragEnter"
+      @dragleave="handleDragEnter"
     >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" v-if="isOpen">
         <path
@@ -101,6 +112,7 @@ const handleDragEnter = () => {
     <FileList
       v-if="isOpen"
       :gap="gap * 5 + 10"
+      :drag-over="dragOver"
       :files="folder.files"
       :selected-id="selectedId"
       @on-select="updateSelectedId"
@@ -114,7 +126,10 @@ const handleDragEnter = () => {
 .container {
   position: relative;
   &:is(.drag_over) {
-    background-color: gray;
+    background-color: #37373d;
+    .title {
+      border-color: #37373d;
+    }
   }
   .title {
     display: flex;
