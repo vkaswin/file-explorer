@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { toRefs, ref, computed } from "vue";
-import Files from "./Files.vue";
+import FileList from "./FileList.vue";
 import { Folder as FolderType } from "@/types/Folder";
 import { useFolder } from "@/store/folder";
 import { storeToRefs } from "pinia";
@@ -74,7 +74,7 @@ const showInput = computed(() => {
       />
     </div>
     <div :class="styles.files" v-if="isOpen">
-      <Files
+      <FileList
         :gap="gap * 5 + 5"
         :files="folder.files"
         :selected-id="selectedId"

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import FolderTree from "@/components/FolderTree.vue";
+import FolderList from "@/components/FolderList.vue";
 </script>
 
 <template>
   <div :class="styles.container">
-    <FolderTree />
+    <FolderList />
   </div>
 </template>
 

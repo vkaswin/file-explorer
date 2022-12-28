@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import File from "./File.vue";
 import { Files } from "@/types/Folder";
 import { getFileIcon } from "@/helper";
 
@@ -23,8 +24,7 @@ const { files } = defineProps<FileProps>();
       :key="id"
       @click="emit('onSelect', id)"
     >
-      <img :src="getFileIcon(title)" alt="Hello" />
-      <span>{{ title }} </span>
+      <File :title="title" />
     </div>
   </div>
 </template>
@@ -52,14 +52,6 @@ const { files } = defineProps<FileProps>();
     &:hover:not(:focus) {
       background-color: #2a2d2e;
       border-color: #2a2d2e;
-    }
-    span {
-      color: #cccccc;
-      font-size: 14px;
-    }
-    img {
-      width: 14px;
-      height: 14px;
     }
   }
 }
