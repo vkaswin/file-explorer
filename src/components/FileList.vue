@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import File from "./File.vue";
 import { Files } from "@/types/Folder";
 
@@ -8,7 +9,9 @@ type FileProps = {
   selectedId: string | null;
 };
 
-const emit = defineEmits(["onSelect"]);
+const dragId = ref<string | null>(null);
+
+const emit = defineEmits(["onSelect", "onDragStart", "onDragEnter"]);
 
 const { files } = defineProps<FileProps>();
 </script>
@@ -21,7 +24,11 @@ const { files } = defineProps<FileProps>();
       tabindex="-1"
       :style="{ paddingLeft: `${gap}px` }"
       :key="id"
+      :draggable="dragId === id"
+      @mousedown="dragId = id"
       @click="emit('onSelect', id)"
+      @dragstart="emit('onDragStart', 'file', id)"
+      @dragenter="emit('onDragEnter')"
     >
       <File :title="title" />
     </div>

@@ -1,3 +1,26 @@
+export type FolderState = {
+  selectedId: string | null;
+  addType: AddType;
+  title: string;
+  error: string | null;
+  expandedFolders: string[];
+  drag: {
+    source: DragSource;
+    destination: DragDestination;
+  };
+  folders: Folder[];
+};
+
+export type DragSource = {
+  folderId: string | null;
+  fileId: string | null;
+  type: "folder" | "file" | null;
+};
+
+export type DragDestination = {
+  folderId: string | null;
+};
+
 export type Files = {
   id: string;
   title: string;

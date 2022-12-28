@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRefs, computed } from "vue";
+import { toRefs, computed, ref, useCssModule } from "vue";
 import FileList from "./FileList.vue";
 import { Folder as FolderType } from "@/types/Folder";
 import { useFolder } from "@/store/folder";
@@ -16,13 +16,23 @@ const folderStore = useFolder();
 
 const { selectedId, addType, expandedFolders } = storeToRefs(folderStore);
 
-const { updateSelectedId, toggleFolder } = folderStore;
+const {
+  updateSelectedId,
+  toggleFolder,
+  addFolderId,
+  updateDragSource,
+  updateDragDestination,
+} = folderStore;
 
 const props = withDefaults(defineProps<FolderProps>(), {
   gap: 1,
 });
 
+const isDragging = ref(false);
+
 const { folder, gap } = toRefs(props);
+
+const styles = useCssModule("styles");
 
 const handleFolder = () => {
   toggleFolder(folder.value.id);
@@ -40,6 +50,16 @@ const showInput = computed(() => {
 const isOpen = computed(() => {
   return expandedFolders.value.includes(folder.value.id);
 });
+
+const handleDragStart = (type: "folder" | "file", id?: string) => {
+  updateDragSource({ folderId: folder.value.id, fileId: id || null, type });
+};
+
+const handleDragEnter = () => {
+  updateDragDestination({
+    folderId: folder.value.id,
+  });
+};
 </script>
 
 <template>
@@ -48,7 +68,11 @@ const isOpen = computed(() => {
       :class="[styles.title, { [styles.selected]: folder.id === selectedId }]"
       :style="{ paddingLeft: `${gap * 5}px` }"
       tabindex="-1"
+      :draggable="isDragging"
+      @mousedown="isDragging = true"
       @click="handleFolder"
+      @dragstart="handleDragStart('folder')"
+      @dragenter="handleDragEnter"
     >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" v-if="isOpen">
         <path
@@ -65,30 +89,33 @@ const isOpen = computed(() => {
       <span>{{ folder.title }}</span>
     </div>
     <AddInput v-if="showInput" :gap="gap * 5 + 5" :add-type="addType" />
-    <div v-if="folder.subFolders !== undefined && isOpen">
-      <Folder
-        v-for="subFolder in folder.subFolders"
-        :gap="gap + 2"
-        :key="subFolder.id"
-        :folder="subFolder"
-        :selected-id="selectedId"
-        @on-select="updateSelectedId"
-      />
-    </div>
-    <div :class="styles.files" v-if="isOpen">
-      <FileList
-        :gap="gap * 5 + 10"
-        :files="folder.files"
-        :selected-id="selectedId"
-        @on-select="updateSelectedId"
-      />
-    </div>
+    <Folder
+      v-if="folder.subFolders !== undefined && isOpen"
+      v-for="subFolder in folder.subFolders"
+      :gap="gap + 2"
+      :key="subFolder.id"
+      :folder="subFolder"
+      :selected-id="selectedId"
+      @on-select="updateSelectedId"
+    />
+    <FileList
+      v-if="isOpen"
+      :gap="gap * 5 + 10"
+      :files="folder.files"
+      :selected-id="selectedId"
+      @on-select="updateSelectedId"
+      @on-drag-start="handleDragStart"
+      @on-drag-enter="handleDragEnter"
+    />
   </div>
 </template>
 
 <style lang="scss" module="styles">
 .container {
   position: relative;
+  &:is(.drag_over) {
+    background-color: gray;
+  }
   .title {
     display: flex;
     align-items: center;
@@ -116,11 +143,6 @@ const isOpen = computed(() => {
       width: 12px;
       height: 12px;
     }
-  }
-  .files {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
   }
 }
 </style>

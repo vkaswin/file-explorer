@@ -2,29 +2,33 @@ import { defineStore } from "pinia";
 import {
   AddSubFolder,
   Folder,
+  FolderState,
   GetRootFolder,
   GroupFoldersByPath,
   SortFunction,
+  DragSource,
+  DragDestination,
   AddType,
   Files,
 } from "@/types/Folder";
 
-export type State = {
-  selectedId: string | null;
-  addType: AddType;
-  title: string;
-  error: string | null;
-  expandedFolders: string[];
-  folders: Folder[];
-};
-
 export const useFolder = defineStore("folder", {
-  state: (): State => {
+  state: (): FolderState => {
     return {
       selectedId: null,
       addType: null,
       title: "",
       error: null,
+      drag: {
+        source: {
+          folderId: null,
+          type: null,
+          fileId: null,
+        },
+        destination: {
+          folderId: null,
+        },
+      },
       expandedFolders: [
         "e0424902-6937-4741-aff9-02fffae995aa",
         "fc5c2979-b629-4498-bf00-91e4087080ef",
@@ -418,8 +422,7 @@ export const useFolder = defineStore("folder", {
         this.error = null;
       } else {
         if (!this.selectedId) return;
-        let isExist = this.expandedFolders.includes(this.selectedId);
-        if (!isExist) this.expandedFolders.push(this.selectedId);
+        this.addFolderId(this.selectedId);
       }
     },
     setError(value: string | null = null) {
@@ -432,6 +435,58 @@ export const useFolder = defineStore("folder", {
       } else {
         this.expandedFolders.splice(index, 1);
       }
+    },
+    addFolderId(id: string) {
+      let isExist = this.expandedFolders.includes(id);
+      if (!isExist) this.expandedFolders.push(id);
+    },
+    updateDragSource(source: DragSource) {
+      this.drag.source = source;
+    },
+    updateDragDestination(destination: DragDestination) {
+      this.drag.destination = destination;
+    },
+    handleDrop() {
+      let { source, destination } = this.drag;
+      let sourceFolder: Folder | undefined,
+        destinationFoler: Folder | undefined;
+
+      for (let folder of this.folders) {
+        if (!sourceFolder && folder.id === source.folderId) {
+          sourceFolder = folder;
+        } else if (!destinationFoler && folder.id === destination.folderId) {
+          destinationFoler = folder;
+        } else if (sourceFolder && destinationFoler) break;
+      }
+      if (!sourceFolder || !destinationFoler) return;
+
+      console.log(sourceFolder, destinationFoler, source, destination);
+      //   if (source.type === "file") {
+      //     let index = folder.files.findIndex(({ id }) => id === source.fileId);
+
+      //     if (index !== -1) {
+      //       sourceFile = { ...folder.files[index] };
+      //       folder.files.splice(index, 1);
+      //     }
+      //   }
+      //   if (source.type === "file") {
+      //     sourceFolder.path = `${destinationFoler.path}/${sourceFolder.title}`;
+      //     destinationFoler.files.push(sourceFolder);
+      //   }
+      this.addFolderId(destinationFoler.id);
+      this.resetDrag();
+    },
+    resetDrag() {
+      this.drag = {
+        source: {
+          folderId: null,
+          type: null,
+          fileId: null,
+        },
+        destination: {
+          folderId: null,
+        },
+      };
     },
   },
 });

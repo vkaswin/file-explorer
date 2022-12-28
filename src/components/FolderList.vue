@@ -9,7 +9,7 @@ import ScrollBar from "./ScrollBar.vue";
 
 const folderStore = useFolder();
 const { foldersList, selectedId, addType } = storeToRefs(folderStore);
-const { toggleAddIcon } = folderStore;
+const { toggleAddIcon, handleDrop } = folderStore;
 
 const folderRef = ref<HTMLDivElement>();
 
@@ -58,7 +58,7 @@ const handleIcon = (type: AddType) => {
         </svg>
       </div>
     </div>
-    <div :class="styles.wrapper">
+    <div :class="styles.wrapper" @dragover.prevent @drop="handleDrop">
       <Folder
         v-for="folder in foldersList"
         :key="folder.id"
