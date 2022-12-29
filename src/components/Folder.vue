@@ -5,6 +5,7 @@ import { Folder as FolderType } from "@/types/Folder";
 import { useFolder } from "@/store/folder";
 import { storeToRefs } from "pinia";
 import AddInput from "./AddInput.vue";
+import ContextMenu from "./ContextMenu.vue";
 
 type FolderProps = {
   gap?: number;
@@ -22,6 +23,8 @@ const {
   expandFolder,
   updateDragSource,
   updateDragDestination,
+  deleteFile,
+  deleteFolder,
 } = folderStore;
 
 const props = withDefaults(defineProps<FolderProps>(), {
@@ -67,6 +70,22 @@ const dragEnter = () => {
   dragOver.value = true;
   expandFolder(folder.value.id);
 };
+
+const handleDelete = (type: "folder" | "file", fileId?: string) => {
+  if (type === "file" && fileId) {
+    deleteFile(folder.value.id, fileId);
+  } else {
+    deleteFolder(folder.value.id);
+  }
+};
+
+const handleRename = (type: "folder" | "file", fileId?: string) => {
+  console.log("rename", folder.value.id, type, fileId);
+};
+
+const handleCopyPath = (type: "folder" | "file", fileId?: string) => {
+  console.log("copyPath", folder.value.id, type, fileId);
+};
 </script>
 
 <template>
@@ -77,6 +96,7 @@ const dragEnter = () => {
     @drop="dragOver = false"
   >
     <div
+      :id="`folder-${folder.id}`"
       :class="[styles.title, { [styles.selected]: folder.id === selectedId }]"
       :style="{ paddingLeft: `${gap * 5}px` }"
       tabindex="-1"
@@ -100,6 +120,12 @@ const dragEnter = () => {
       </svg>
       <span>{{ folder.title }}</span>
     </div>
+    <ContextMenu
+      :selector="`#folder-${folder.id}`"
+      @on-rename="handleRename('folder')"
+      @on-delete="handleDelete('folder')"
+      @on-copy-path="handleCopyPath('folder')"
+    />
     <AddInput v-if="showInput" :gap="gap * 5 + 5" :add-type="addType" />
     <Folder
       v-if="folder.subFolders !== undefined && isOpen"
@@ -119,6 +145,9 @@ const dragEnter = () => {
       @on-select="updateSelectedId"
       @on-drag-start="handleDragStart"
       @on-drag-enter="handleDragEnter"
+      @on-rename="handleRename"
+      @on-delete="handleDelete"
+      @on-coyp-path="handleCopyPath"
     />
   </div>
 </template>

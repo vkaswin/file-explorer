@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import File from "./File.vue";
 import { Files } from "@/types/Folder";
+import ContextMenu from "./ContextMenu.vue";
 
 type FileProps = {
   gap: number;
@@ -10,9 +11,20 @@ type FileProps = {
   dragOver: boolean;
 };
 
+type EmitType = {
+  (event: "onSelect", id: string): void;
+  (event: "onDragStart", type: "file", id: string): void;
+  (event: "onDragEnter"): void;
+  (
+    event: "onDelete" | "onRename" | "onCoypPath",
+    type: "file",
+    fileId: string
+  ): void;
+};
+
 const dragId = ref<string | null>(null);
 
-const emit = defineEmits(["onSelect", "onDragStart", "onDragEnter"]);
+const emit = defineEmits<EmitType>();
 
 const { files, dragOver } = defineProps<FileProps>();
 </script>
@@ -21,6 +33,7 @@ const { files, dragOver } = defineProps<FileProps>();
   <div :class="[styles.container, dragOver && styles.drag_over]">
     <div
       v-for="{ id, path, title } in files"
+      :id="`file-${id}`"
       :class="[styles.title, { [styles.selected]: id === selectedId }]"
       tabindex="-1"
       :style="{ paddingLeft: `${gap}px` }"
@@ -32,6 +45,12 @@ const { files, dragOver } = defineProps<FileProps>();
       @dragenter="emit('onDragEnter')"
     >
       <File :title="title" />
+      <ContextMenu
+        :selector="`#file-${id}`"
+        @on-delete="emit('onDelete', 'file', id)"
+        @on-rename="emit('onRename', 'file', id)"
+        @on-copy-path="emit('onCoypPath', 'file', id)"
+      />
     </div>
   </div>
 </template>

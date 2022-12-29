@@ -17,9 +17,9 @@ const folderRef = ref<HTMLDivElement>();
 
 onMounted(() => {
   let expandedFolderIds = JSON.parse(
-    localStorage.getItem("expandedFolderIds") || ""
+    localStorage.getItem("expandedFolderIds") ?? "[]"
   );
-  let folders = JSON.parse(localStorage.getItem("folders") || "");
+  let folders = JSON.parse(localStorage.getItem("folders") ?? "[]");
   if (Array.isArray(folders) && folders.length > 0) {
     setFolders(folders as FolderType[]);
   }
