@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import File from "./File.vue";
-import { Files } from "@/types/Folder";
+import { ActionType, Files } from "@/types/Folder";
 import ContextMenu from "./ContextMenu.vue";
+import Input from "./Input.vue";
 
 type FileProps = {
   gap: number;
   files: Files[];
   selectedId: string | null;
   dragOver: boolean;
+  renameId: string | null;
+  actionType: ActionType;
 };
 
 type EmitType = {
@@ -26,7 +29,7 @@ const dragId = ref<string | null>(null);
 
 const emit = defineEmits<EmitType>();
 
-const { files, dragOver } = defineProps<FileProps>();
+const { files, dragOver, renameId } = defineProps<FileProps>();
 </script>
 
 <template>
@@ -44,7 +47,8 @@ const { files, dragOver } = defineProps<FileProps>();
       @dragstart="emit('onDragStart', 'file', id)"
       @dragenter="emit('onDragEnter')"
     >
-      <File :title="title" />
+      <Input :action-type="actionType" v-if="id === renameId" />
+      <File v-else :file-id="id" :title="title" />
       <ContextMenu
         :selector="`#file-${id}`"
         @on-delete="emit('onDelete', 'file', id)"

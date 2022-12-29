@@ -4,7 +4,7 @@ import FileList from "./FileList.vue";
 import { Folder as FolderType } from "@/types/Folder";
 import { useFolder } from "@/store/folder";
 import { storeToRefs } from "pinia";
-import AddInput from "./AddInput.vue";
+import Input from "./Input.vue";
 import ContextMenu from "./ContextMenu.vue";
 
 type FolderProps = {
@@ -15,7 +15,7 @@ type FolderProps = {
 
 const folderStore = useFolder();
 
-const { selectedId, addType, expandedFolderIds, folders } =
+const { selectedId, actionType, expandedFolderIds, folders, renameId } =
   storeToRefs(folderStore);
 
 const {
@@ -26,6 +26,7 @@ const {
   updateDragDestination,
   deleteFile,
   deleteFolder,
+  setRenameId,
 } = folderStore;
 
 const props = withDefaults(defineProps<FolderProps>(), {
@@ -47,7 +48,7 @@ const handleFolder = () => {
 
 const showInput = computed(() => {
   let isSelected =
-    addType.value &&
+    actionType.value &&
     (selectedId.value === folder.value.id ||
       folder.value.files.findIndex(({ id }) => id === selectedId.value) !== -1);
   return isSelected;
@@ -81,7 +82,7 @@ const handleDelete = (type: "folder" | "file", fileId?: string) => {
 };
 
 const handleRename = (type: "folder" | "file", fileId?: string) => {
-  console.log("rename", folder.value.id, type, fileId);
+  setRenameId(type, folder.value.id, fileId);
 };
 
 const handleCopyPath = (type: "folder" | "file", fileId?: string) => {
@@ -106,12 +107,17 @@ const handleCopyPath = (type: "folder" | "file", fileId?: string) => {
     @dragleave.stop="dragOver = false"
     @drop="dragOver = false"
   >
+    <div v-if="actionType && renameId === folder.id">
+      <Input :action-type="actionType" :gap="gap * 5" :is-folder="true" />
+    </div>
     <div
+      v-else
       :id="`folder-${folder.id}`"
       :class="[styles.title, { [styles.selected]: folder.id === selectedId }]"
       :style="{ paddingLeft: `${gap * 5}px` }"
       tabindex="-1"
       :draggable="isDragging"
+      :rename-id="renameId"
       @mousedown="isDragging = true"
       @click="handleFolder"
       @dragstart="handleDragStart('folder')"
@@ -131,13 +137,14 @@ const handleCopyPath = (type: "folder" | "file", fileId?: string) => {
       </svg>
       <span>{{ folder.title }}</span>
     </div>
+
     <ContextMenu
       :selector="`#folder-${folder.id}`"
       @on-rename="handleRename('folder')"
       @on-delete="handleDelete('folder')"
       @on-copy-path="handleCopyPath('folder')"
     />
-    <AddInput v-if="showInput" :gap="gap * 5 + 5" :add-type="addType" />
+    <Input v-if="showInput" :gap="gap * 5 + 5" :action-type="actionType" />
     <Folder
       v-if="folder.subFolders !== undefined && isOpen"
       v-for="subFolder in folder.subFolders"
@@ -153,6 +160,8 @@ const handleCopyPath = (type: "folder" | "file", fileId?: string) => {
       :drag-over="dragOver"
       :files="folder.files"
       :selected-id="selectedId"
+      :action-type="actionType"
+      :rename-id="renameId"
       @on-select="updateSelectedId"
       @on-drag-start="handleDragStart"
       @on-drag-enter="handleDragEnter"

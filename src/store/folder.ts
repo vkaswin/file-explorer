@@ -8,7 +8,7 @@ import {
   SortFunction,
   DragSource,
   DragDestination,
-  AddType,
+  ActionType,
   Files,
 } from "@/types/Folder";
 
@@ -124,7 +124,8 @@ export const useFolder = defineStore("folder", {
       folders: [],
       expandedFolderIds: [],
       selectedId: null,
-      addType: null,
+      renameId: null,
+      actionType: null,
       title: "",
       error: null,
       drag: {
@@ -229,9 +230,9 @@ export const useFolder = defineStore("folder", {
     updateSelectedId(id: string) {
       this.selectedId = id;
     },
-    toggleAddIcon(type: AddType = null) {
-      this.addType = type;
-      if (!type) {
+    toggleAddIcon(actionType: ActionType = null) {
+      this.actionType = actionType;
+      if (!actionType) {
         this.title = "";
         this.error = null;
       } else {
@@ -321,6 +322,26 @@ export const useFolder = defineStore("folder", {
     setExpandedFolderIds(folderIds: string[]) {
       this.expandedFolderIds = folderIds;
       setExpandedFolderIds(this.expandedFolderIds);
+    },
+    setRenameId(
+      actionType: ActionType,
+      folderId: string | null,
+      fileId?: string | null
+    ) {
+      let renameId = folderId;
+      let title: string;
+      let selectedFolder = this.folders.find(({ id }) => id === folderId);
+      if (!selectedFolder) return;
+      title = selectedFolder.title;
+      if (actionType === "file" && fileId) {
+        let selectedFile = selectedFolder.files.find(({ id }) => id === fileId);
+        if (!selectedFile) return;
+        renameId = fileId;
+        title = selectedFile.title;
+      }
+      this.title = title;
+      this.actionType = actionType;
+      this.renameId = renameId;
     },
   },
 });

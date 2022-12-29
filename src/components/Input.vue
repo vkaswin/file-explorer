@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { toRefs, ref, onMounted } from "vue";
-import { AddType } from "@/types/Folder";
+import { toRefs, ref, onMounted, computed } from "vue";
+import { ActionType } from "@/types/Folder";
 import { storeToRefs } from "pinia";
 import { useFolder } from "@/store/folder";
 import { getFileIcon } from "@/utils";
 
 type AddFolderProps = {
   gap?: number;
-  addType: AddType;
+  actionType: ActionType;
+  isFolder?: boolean;
 };
 
 const props = withDefaults(defineProps<AddFolderProps>(), {
@@ -23,7 +24,7 @@ const { title, error, existingFiles, existingFolders } =
 
 const { createFolder, createFile, setError } = foldetStore;
 
-const { gap, addType } = toRefs(props);
+const { gap, actionType } = toRefs(props);
 
 onMounted(() => {
   if (!inputRef.value) return;
@@ -31,22 +32,22 @@ onMounted(() => {
 });
 
 const validateField = () => {
-  if (addType.value === null) return;
+  if (actionType.value === null) return;
   let error: string | null = null;
   if (title.value.length === 0) {
     error = `A ${
-      addType.value === "file" ? "File" : "Folder"
+      actionType.value === "file" ? "File" : "Folder"
     } name must be provided`;
   } else {
     if (title.value === ".") {
       error = `The name <b>.</b> is not a valid as a file or folder name. So please choose different name.`;
     } else {
       let isExist =
-        addType.value === "file"
+        actionType.value === "file"
           ? existingFiles.value.includes(title.value.toLocaleLowerCase())
           : existingFolders.value.includes(title.value.toLocaleLowerCase());
       if (isExist) {
-        error = `A ${addType.value === "file" ? "File" : "Folder"} <b>${
+        error = `A ${actionType.value === "file" ? "File" : "Folder"} <b>${
           title.value
         }</b> already exists at this location. Please choose a different name`;
       } else {
@@ -58,14 +59,16 @@ const validateField = () => {
 };
 
 const handleEnter = () => {
-  addType.value === "file" ? createFile() : createFolder();
+  actionType.value === "file" ? createFile() : createFolder();
 };
+
+const icon = computed(() => getFileIcon(title.value));
 </script>
 
 <template>
   <div :class="styles.container" :style="{ paddingLeft: `${gap}px` }">
     <svg
-      v-if="addType === 'folder'"
+      v-if="actionType === 'folder'"
       xmlns="http://www.w3.org/2000/svg"
       width="12"
       height="12"
@@ -76,7 +79,7 @@ const handleEnter = () => {
         d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
       />
     </svg>
-    <img v-if="addType === 'file'" :src="getFileIcon(title)" />
+    <img v-if="actionType === 'file'" :src="icon" />
     <div :class="styles.field">
       <input
         ref="inputRef"

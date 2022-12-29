@@ -2,13 +2,13 @@
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useFolder } from "@/store/folder";
-import { AddType, Folder as FolderType } from "@/types/Folder";
+import { ActionType, Folder as FolderType } from "@/types/Folder";
 import Folder from "./Folder.vue";
-import AddInput from "./AddInput.vue";
+import Input from "./Input.vue";
 import ScrollBar from "./ScrollBar.vue";
 
 const folderStore = useFolder();
-const { foldersList, selectedId, addType, expandedFolderIds } =
+const { foldersList, selectedId, actionType, renameId } =
   storeToRefs(folderStore);
 const { toggleAddIcon, handleDrop, setFolders, setExpandedFolderIds } =
   folderStore;
@@ -36,9 +36,9 @@ const handleClickOutSide = (event: MouseEvent) => {
   toggleAddIcon();
 };
 
-const handleIcon = (type: AddType) => {
+const handleIcon = (actionType: ActionType) => {
   window.addEventListener("click", handleClickOutSide);
-  toggleAddIcon(type);
+  toggleAddIcon(actionType);
 };
 </script>
 
@@ -80,13 +80,13 @@ const handleIcon = (type: AddType) => {
         :folder="folder"
         :selected-id="selectedId"
       />
-      <AddInput
-        v-if="addType && selectedId === null"
+      <Input
+        v-if="actionType && selectedId === null && renameId === null"
         :gap="5"
-        :add-type="addType"
+        :action-type="actionType"
       />
       <ScrollBar />
-      <div :class="styles.overlay" v-if="addType !== null"></div>
+      <div :class="styles.overlay" v-if="actionType !== null"></div>
     </div>
   </div>
 </template>
@@ -96,7 +96,8 @@ const handleIcon = (type: AddType) => {
   display: flex;
   flex-direction: column;
   background-color: #252526;
-  width: 300px;
+  --folder-width: 300px;
+  width: var(--folder-width);
   height: 100%;
   .header {
     display: flex;
@@ -136,11 +137,11 @@ const handleIcon = (type: AddType) => {
       display: none;
     }
     .overlay {
-      position: absolute;
+      position: fixed;
       top: 0px;
       left: 0px;
+      width: var(--folder-width);
       height: 100%;
-      width: 100%;
       background-color: rgba(0, 0, 0, 0.5);
       z-index: 2;
     }
