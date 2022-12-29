@@ -19,7 +19,7 @@ const { selectedId, addType, expandedFolders } = storeToRefs(folderStore);
 const {
   updateSelectedId,
   toggleFolder,
-  addFolderId,
+  expandFolder,
   updateDragSource,
   updateDragDestination,
 } = folderStore;
@@ -65,15 +65,16 @@ const handleDragEnter = () => {
 
 const dragEnter = () => {
   dragOver.value = true;
-  addFolderId(folder.value.id);
+  expandFolder(folder.value.id);
 };
 </script>
 
 <template>
   <div
     :class="[styles.container, dragOver && styles.drag_over]"
-    @dragenter="dragEnter"
-    @dragleave="dragOver = false"
+    @dragenter.stop="dragEnter"
+    @dragleave.stop="dragOver = false"
+    @drop="dragOver = false"
   >
     <div
       :class="[styles.title, { [styles.selected]: folder.id === selectedId }]"
@@ -83,7 +84,7 @@ const dragEnter = () => {
       @mousedown="isDragging = true"
       @click="handleFolder"
       @dragstart="handleDragStart('folder')"
-      @dragleave="handleDragEnter"
+      @dragenter="handleDragEnter"
     >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" v-if="isOpen">
         <path

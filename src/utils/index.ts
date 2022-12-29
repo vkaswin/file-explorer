@@ -58,9 +58,12 @@ export const extensions = [
 ];
 
 export const getFileIcon = (fileName: string) => {
+  if (!fileName.includes(".")) return require("@/assets/file-icons/file.svg");
+
   let keys = fileName.split(".");
   let extension = keys[keys.length - 1].toLocaleLowerCase();
   let icon: string;
+
   switch (extension as Extension) {
     case "js":
       icon = "javascript";

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, toRefs } from "vue";
+import { ref } from "vue";
 import File from "./File.vue";
 import { Files } from "@/types/Folder";
 
@@ -50,8 +50,7 @@ const { files, dragOver } = defineProps<FileProps>();
     display: flex;
     align-items: center;
     gap: 5px;
-    border: 1px solid;
-    border-color: #252526;
+    border: 1px solid transparent;
     user-select: none;
     cursor: pointer;
     &:is(.selected) {
@@ -60,11 +59,10 @@ const { files, dragOver } = defineProps<FileProps>();
     }
     &:focus {
       background-color: #05395e;
-      border-color: #017fd4;
+      border: 1px solid #017fd4;
     }
     &:hover:not(:focus) {
       background-color: #2a2d2e;
-      border-color: #2a2d2e;
     }
   }
 }

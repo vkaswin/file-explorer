@@ -65,14 +65,14 @@ const handleIcon = (type: AddType) => {
         :folder="folder"
         :selected-id="selectedId"
       />
+      <AddInput
+        v-if="addType && selectedId === null"
+        :gap="5"
+        :add-type="addType"
+      />
       <ScrollBar />
+      <div :class="styles.overlay" v-if="addType !== null"></div>
     </div>
-    <AddInput
-      v-if="addType && selectedId === null"
-      :gap="5"
-      :add-type="addType"
-    />
-    <div :class="styles.overlay" v-if="addType"></div>
   </div>
 </template>
 
@@ -113,21 +113,22 @@ const handleIcon = (type: AddType) => {
     }
   }
   .wrapper {
+    position: relative;
     max-height: 100%;
     height: 100%;
     overflow: auto;
     &::-webkit-scrollbar {
       display: none;
     }
-  }
-  .overlay {
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    height: 100%;
-    width: var(--folder-width);
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 2;
+    .overlay {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      height: 100%;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 2;
+    }
   }
 }
 </style>

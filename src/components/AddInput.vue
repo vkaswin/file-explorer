@@ -21,8 +21,6 @@ const inputRef = ref<HTMLInputElement>();
 const { title, error, existingFiles, existingFolders } =
   storeToRefs(foldetStore);
 
-const validate = ref(false);
-
 const { createFolder, createFile, setError } = foldetStore;
 
 const { gap, addType } = toRefs(props);
@@ -34,33 +32,32 @@ onMounted(() => {
 
 const validateField = () => {
   if (addType.value === null) return;
-  let error: string = "";
-  if (!validate.value) return false;
+  let error: string | null = null;
   if (title.value.length === 0) {
     error = `A ${
       addType.value === "file" ? "File" : "Folder"
     } name must be provided`;
-    setError(error);
   } else {
-    let isExist =
-      addType.value === "file"
-        ? existingFiles.value.includes(title.value.toLocaleLowerCase())
-        : existingFolders.value.includes(title.value.toLocaleLowerCase());
-    if (isExist) {
-      error = `A ${addType.value === "file" ? "File" : "Folder"} <b>${
-        title.value
-      }</b> already exists at this location. Please choose a different name`;
-      setError(error);
+    if (title.value === ".") {
+      error = `The name <b>.</b> is not a valid as a file or folder name. So please choose different name.`;
     } else {
-      setError(null);
+      let isExist =
+        addType.value === "file"
+          ? existingFiles.value.includes(title.value.toLocaleLowerCase())
+          : existingFolders.value.includes(title.value.toLocaleLowerCase());
+      if (isExist) {
+        error = `A ${addType.value === "file" ? "File" : "Folder"} <b>${
+          title.value
+        }</b> already exists at this location. Please choose a different name`;
+      } else {
+        error = null;
+      }
     }
   }
-  return error.length > 0;
+  setError(error);
 };
 
 const handleEnter = () => {
-  validate.value = true;
-  if (validateField()) return;
   addType.value === "file" ? createFile() : createFolder();
 };
 </script>
