@@ -1,17 +1,32 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useFolder } from "@/store/folder";
-import { AddType } from "@/types/Folder";
+import { AddType, Folder as FolderType } from "@/types/Folder";
 import Folder from "./Folder.vue";
 import AddInput from "./AddInput.vue";
 import ScrollBar from "./ScrollBar.vue";
 
 const folderStore = useFolder();
-const { foldersList, selectedId, addType } = storeToRefs(folderStore);
-const { toggleAddIcon, handleDrop } = folderStore;
+const { foldersList, selectedId, addType, expandedFolderIds } =
+  storeToRefs(folderStore);
+const { toggleAddIcon, handleDrop, setFolders, setExpandedFolderIds } =
+  folderStore;
 
 const folderRef = ref<HTMLDivElement>();
+
+onMounted(() => {
+  let expandedFolderIds = JSON.parse(
+    localStorage.getItem("expandedFolderIds") || ""
+  );
+  let folders = JSON.parse(localStorage.getItem("folders") || "");
+  if (Array.isArray(folders) && folders.length > 0) {
+    setFolders(folders as FolderType[]);
+  }
+  if (Array.isArray(expandedFolderIds) && expandedFolderIds.length > 0) {
+    setExpandedFolderIds(expandedFolderIds);
+  }
+});
 
 const handleClickOutSide = (event: MouseEvent) => {
   if (!folderRef.value) return;

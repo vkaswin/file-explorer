@@ -15,6 +15,8 @@ import {
 export const useFolder = defineStore("folder", {
   state: (): FolderState => {
     return {
+      folders: [],
+      expandedFolderIds: [],
       selectedId: null,
       addType: null,
       title: "",
@@ -29,315 +31,6 @@ export const useFolder = defineStore("folder", {
           folderId: null,
         },
       },
-      expandedFolders: [
-        // "e0424902-6937-4741-aff9-02fffae995aa",
-        // "fc5c2979-b629-4498-bf00-91e4087080ef",
-        // "b3c4da9e-7283-464f-9eda-f864aa46f9a5",
-        // "6154f081-fadd-465f-8d15-83fad5375761",
-        // "653e7dd0-bd0c-4fc7-8f9c-696cd2c896c0",
-        // "af36c726-6ace-4fd9-b06c-1ce6fcba4d71",
-        // "213eacc6-6d95-48fb-85eb-01d400a58824",
-      ],
-      folders: [
-        {
-          id: "1",
-          title: "src",
-          path: "/src",
-          files: [
-            {
-              id: "11",
-              title: "index.js",
-              path: "/src/index.js",
-            },
-          ],
-        },
-        {
-          id: "2",
-          title: "node_modules",
-          path: "/node_modules",
-          files: [],
-        },
-        {
-          id: "3",
-          title: "store",
-          path: "/store",
-          files: [],
-        },
-        {
-          id: "4",
-          title: "helper",
-          path: "/helper",
-          files: [],
-        },
-        {
-          id: "5",
-          title: "components",
-          path: "/components",
-          files: [],
-        },
-        {
-          id: "6",
-          title: "dist",
-          path: "/dist",
-          files: [],
-        },
-        {
-          id: "7",
-          title: "types",
-          path: "/types",
-          files: [],
-        },
-        {
-          id: "8",
-          title: "public",
-          path: "/public",
-          files: [
-            {
-              id: "81",
-              title: "index.html",
-              path: "/public/index.html",
-            },
-            {
-              id: "82",
-              title: "favicon.ico",
-              path: "/public/favicon.ico",
-            },
-          ],
-        },
-        {
-          id: "9",
-          title: "assets",
-          path: "/public/assets",
-          files: [
-            {
-              id: "91",
-              title: "index.html",
-              path: "/public/assets/index.html",
-            },
-            {
-              id: "92",
-              title: "favicon.ico",
-              path: "/public/assets/favicon.ico",
-            },
-          ],
-        },
-        {
-          id: "10",
-          title: "images",
-          path: "/public/assets/images",
-          files: [
-            {
-              id: "101",
-              title: "index.html",
-              path: "/public/assets/images/index.html",
-            },
-            {
-              id: "102",
-              title: "favicon.ico",
-              path: "/public/assets/images/favicon.ico",
-            },
-          ],
-        },
-        {
-          id: "11",
-          title: "js",
-          path: "/public/assets/js",
-          files: [
-            {
-              id: "111",
-              title: "index.html",
-              path: "/public/assets/js/index.html",
-            },
-            {
-              id: "112",
-              title: "favicon.ico",
-              path: "/public/assets/js/favicon.ico",
-            },
-          ],
-        },
-        {
-          id: "12",
-          title: "html",
-          path: "/public/html",
-          files: [
-            {
-              id: "121",
-              title: "index.html",
-              path: "/public/html/index.html",
-            },
-            {
-              id: "122",
-              title: "favicon.ico",
-              path: "/public/html/favicon.ico",
-            },
-          ],
-        },
-        {
-          id: "13",
-          title: "Hello",
-          path: "/src/Test/Demo/Hello",
-          files: [
-            {
-              id: "131",
-              title: "style.scss",
-              path: "/src/Test/Demo/Hello/style.scss",
-            },
-            {
-              id: "132",
-              title: "hello.js",
-              path: "/src/Test/Demo/Hello/hello.js",
-            },
-            {
-              id: "133",
-              title: "index.js",
-              path: "/src/Test/Demo/Hello/index.js",
-            },
-          ],
-        },
-        {
-          id: "14",
-          title: "World",
-          path: "/src/World",
-          files: [
-            {
-              id: "141",
-              title: "hello.js",
-              path: "/src/World/hello.js",
-            },
-            {
-              id: "142",
-              title: "index.js",
-              path: "/src/World/index.js",
-            },
-          ],
-        },
-        {
-          id: "15",
-          title: "Bye",
-          path: "/src/Test/Demo/Hello/Bye",
-          files: [
-            {
-              id: "151",
-              title: "hello.js",
-              path: "/src/Test/Demo/Hello/hello.js",
-            },
-            {
-              id: "152",
-              title: "index.js",
-              path: "/src/Test/Demo/Hello/index.js",
-            },
-          ],
-        },
-        {
-          id: "16",
-          title: "World",
-          path: "/src/Test/Demo/World",
-          files: [
-            {
-              id: "161",
-              title: "hello.js",
-              path: "/src/Test/Demo/World/hello.js",
-            },
-            {
-              id: "162",
-              title: "index.js",
-              path: "/src/Test/Demo/World/index.js",
-            },
-          ],
-        },
-        {
-          id: "17",
-          title: "Demo",
-          path: "/src/World/Demo",
-          files: [
-            {
-              id: "171",
-              title: "hello.js",
-              path: "/src/World/Demo/hello.js",
-            },
-            {
-              id: "172",
-              title: "index.js",
-              path: "/src/World/Demo/index.js",
-            },
-          ],
-        },
-        {
-          id: "18",
-          title: "Test",
-          path: "/src/Test",
-          files: [
-            {
-              id: "181",
-              title: "test.js",
-              path: "/src/Test/test.js",
-            },
-          ],
-        },
-        {
-          id: "19",
-          title: "Demo",
-          path: "/src/Test/Demo",
-          files: [
-            {
-              id: "191",
-              title: "demo.js",
-              path: "/src/Test/Demo/demo.js",
-            },
-            {
-              id: "192",
-              title: "index.js",
-              path: "/src/Test/Demo/index.js",
-            },
-          ],
-        },
-        {
-          id: "20",
-          title: "utils",
-          path: "/utils",
-          files: [
-            {
-              id: "201",
-              title: "index.js",
-              path: "/utils/index.js",
-            },
-          ],
-        },
-        {
-          id: "21",
-          title: "cookies",
-          path: "/utils/cookies",
-          files: [
-            {
-              id: "211",
-              title: "index.js",
-              path: "/utils/cookies/index.js",
-            },
-          ],
-        },
-        {
-          id: "22",
-          title: "helper",
-          path: "/src/Helper",
-          files: [
-            {
-              id: "221",
-              title: "util.js",
-              path: "/src/helper/util.js",
-            },
-            {
-              id: "222",
-              title: "demo.js",
-              path: "/src/helper/demo.js",
-            },
-            {
-              id: "223",
-              title: "service.js",
-              path: "/src/helper/service.js",
-            },
-          ],
-        },
-      ],
     };
   },
   getters: {
@@ -382,6 +75,7 @@ export const useFolder = defineStore("folder", {
       };
       this.folders.push(folder);
       this.toggleAddIcon();
+      localStorage.setItem("folders", JSON.stringify(this.folders));
     },
     createFile() {
       if (this.error !== null || !this.selectedFolder) return;
@@ -396,6 +90,7 @@ export const useFolder = defineStore("folder", {
       if (index === -1) return;
       this.folders[index].files.push(file);
       this.toggleAddIcon();
+      localStorage.setItem("folders", JSON.stringify(this.folders));
     },
     updateFolder(folderId: string, folder: Folder) {
       let folders = this.folders;
@@ -429,16 +124,26 @@ export const useFolder = defineStore("folder", {
       this.error = value;
     },
     toggleFolder(id: string) {
-      let index = this.expandedFolders.indexOf(id);
+      let index = this.expandedFolderIds.indexOf(id);
       if (index === -1) {
-        this.expandedFolders.push(id);
+        this.expandedFolderIds.push(id);
       } else {
-        this.expandedFolders.splice(index, 1);
+        this.expandedFolderIds.splice(index, 1);
       }
+      localStorage.setItem(
+        "expandedFolderIds",
+        JSON.stringify(this.expandedFolderIds)
+      );
     },
     expandFolder(id: string) {
-      let isExist = this.expandedFolders.includes(id);
-      if (!isExist) this.expandedFolders.push(id);
+      let isExist = this.expandedFolderIds.includes(id);
+      if (!isExist) {
+        this.expandedFolderIds.push(id);
+        localStorage.setItem(
+          "expandedFolderIds",
+          JSON.stringify(this.expandedFolderIds)
+        );
+      }
     },
     updateDragSource(source: DragSource) {
       this.drag.source = source;
@@ -482,6 +187,7 @@ export const useFolder = defineStore("folder", {
         }
       }
       this.resetDrag();
+      localStorage.setItem("folders", JSON.stringify(this.folders));
     },
     resetDrag() {
       this.drag = {
@@ -494,6 +200,12 @@ export const useFolder = defineStore("folder", {
           folderId: null,
         },
       };
+    },
+    setFolders(folders: Folder[]) {
+      this.folders = folders;
+    },
+    setExpandedFolderIds(folderIds: string[]) {
+      this.expandedFolderIds = folderIds;
     },
   },
 });

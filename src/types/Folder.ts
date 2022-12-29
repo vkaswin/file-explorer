@@ -3,7 +3,7 @@ export type FolderState = {
   addType: AddType;
   title: string;
   error: string | null;
-  expandedFolders: string[];
+  expandedFolderIds: string[];
   drag: {
     source: DragSource;
     destination: DragDestination;

@@ -14,7 +14,7 @@ type FolderProps = {
 
 const folderStore = useFolder();
 
-const { selectedId, addType, expandedFolders } = storeToRefs(folderStore);
+const { selectedId, addType, expandedFolderIds } = storeToRefs(folderStore);
 
 const {
   updateSelectedId,
@@ -50,7 +50,7 @@ const showInput = computed(() => {
 });
 
 const isOpen = computed(() => {
-  return expandedFolders.value.includes(folder.value.id);
+  return expandedFolderIds.value.includes(folder.value.id);
 });
 
 const handleDragStart = (type: "folder" | "file", id?: string) => {
