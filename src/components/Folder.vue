@@ -15,7 +15,8 @@ type FolderProps = {
 
 const folderStore = useFolder();
 
-const { selectedId, addType, expandedFolderIds } = storeToRefs(folderStore);
+const { selectedId, addType, expandedFolderIds, folders } =
+  storeToRefs(folderStore);
 
 const {
   updateSelectedId,
@@ -84,7 +85,17 @@ const handleRename = (type: "folder" | "file", fileId?: string) => {
 };
 
 const handleCopyPath = (type: "folder" | "file", fileId?: string) => {
-  console.log("copyPath", folder.value.id, type, fileId);
+  let path: string | undefined;
+  let selectedFolder = folders.value.find(({ id }) => id === folder.value.id);
+  if (!selectedFolder) return;
+  if (type === "file" && fileId) {
+    let file = selectedFolder.files.find(({ id }) => id === fileId);
+    if (!file) return;
+    path = file.path;
+  } else {
+    path = selectedFolder.path;
+  }
+  navigator.clipboard.writeText(path);
 };
 </script>
 
