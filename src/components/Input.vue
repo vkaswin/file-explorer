@@ -11,6 +11,8 @@ type AddFolderProps = {
   isFolder?: boolean;
 };
 
+const emit = defineEmits(["onEnter"]);
+
 const props = withDefaults(defineProps<AddFolderProps>(), {
   gap: 5,
 });
@@ -19,10 +21,9 @@ const foldetStore = useFolder();
 
 const inputRef = ref<HTMLInputElement>();
 
-const { title, error, existingFiles, existingFolders } =
-  storeToRefs(foldetStore);
+const { title, error } = storeToRefs(foldetStore);
 
-const { createFolder, createFile, setError } = foldetStore;
+const { validateTitle } = foldetStore;
 
 const { gap, actionType } = toRefs(props);
 
@@ -30,37 +31,6 @@ onMounted(() => {
   if (!inputRef.value) return;
   inputRef.value.focus();
 });
-
-const validateField = () => {
-  if (actionType.value === null) return;
-  let error: string | null = null;
-  if (title.value.length === 0) {
-    error = `A ${
-      actionType.value === "file" ? "File" : "Folder"
-    } name must be provided`;
-  } else {
-    if (title.value === ".") {
-      error = `The name <b>.</b> is not a valid as a file or folder name. So please choose different name.`;
-    } else {
-      let isExist =
-        actionType.value === "file"
-          ? existingFiles.value.includes(title.value.toLocaleLowerCase())
-          : existingFolders.value.includes(title.value.toLocaleLowerCase());
-      if (isExist) {
-        error = `A ${actionType.value === "file" ? "File" : "Folder"} <b>${
-          title.value
-        }</b> already exists at this location. Please choose a different name`;
-      } else {
-        error = null;
-      }
-    }
-  }
-  setError(error);
-};
-
-const handleEnter = () => {
-  actionType.value === "file" ? createFile() : createFolder();
-};
 
 const icon = computed(() => getFileIcon(title.value));
 </script>
@@ -86,8 +56,8 @@ const icon = computed(() => getFileIcon(title.value));
         type="text"
         v-model="title"
         :aria-invalid="error !== null"
-        @keydown.enter="handleEnter"
-        @input="validateField"
+        @keydown.enter="emit('onEnter')"
+        @input="validateTitle"
         required
       />
       <div :class="styles.error" v-if="error !== null" v-html="error"></div>

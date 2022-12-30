@@ -23,22 +23,24 @@ type EmitType = {
     type: "file",
     fileId: string
   ): void;
+  (event: "onEnter", fileId: string): void;
 };
 
 const dragId = ref<string | null>(null);
 
 const emit = defineEmits<EmitType>();
 
-const { files, dragOver, renameId } = defineProps<FileProps>();
+const { files, dragOver, renameId, gap, actionType, selectedId } =
+  defineProps<FileProps>();
 </script>
 
 <template>
   <div :class="[styles.container, dragOver && styles.drag_over]">
     <div
       v-for="{ id, path, title } in files"
+      tabindex="-1"
       :id="`file-${id}`"
       :class="[styles.title, { [styles.selected]: id === selectedId }]"
-      tabindex="-1"
       :style="{ paddingLeft: `${gap}px` }"
       :key="id"
       :draggable="dragId === id"
@@ -47,8 +49,12 @@ const { files, dragOver, renameId } = defineProps<FileProps>();
       @dragstart="emit('onDragStart', 'file', id)"
       @dragenter="emit('onDragEnter')"
     >
-      <Input :action-type="actionType" v-if="id === renameId" />
-      <File v-else :file-id="id" :title="title" />
+      <Input
+        :action-type="actionType"
+        v-if="id === renameId"
+        @on-enter="emit('onEnter', id)"
+      />
+      <File v-else :title="title" />
       <ContextMenu
         :selector="`#file-${id}`"
         @on-delete="emit('onDelete', 'file', id)"

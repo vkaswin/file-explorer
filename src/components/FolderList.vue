@@ -10,8 +10,14 @@ import ScrollBar from "./ScrollBar.vue";
 const folderStore = useFolder();
 const { foldersList, selectedId, actionType, renameId } =
   storeToRefs(folderStore);
-const { toggleAddIcon, handleDrop, setFolders, setExpandedFolderIds } =
-  folderStore;
+
+const {
+  toggleAddIcon,
+  handleDrop,
+  setFolders,
+  setExpandedFolderIds,
+  createFolderOrFile,
+} = folderStore;
 
 const folderRef = ref<HTMLDivElement>();
 
@@ -84,6 +90,7 @@ const handleIcon = (actionType: ActionType) => {
         v-if="actionType && selectedId === null && renameId === null"
         :gap="5"
         :action-type="actionType"
+        @on-enter="createFolderOrFile"
       />
       <ScrollBar />
       <div :class="styles.overlay" v-if="actionType !== null"></div>
