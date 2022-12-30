@@ -51,7 +51,7 @@ const { files, dragOver, renameId, gap, actionType, selectedId } =
     >
       <Input
         :action-type="actionType"
-        v-if="id === renameId"
+        v-if="actionType && id === renameId"
         @on-enter="emit('onEnter', id)"
       />
       <File v-else :title="title" />

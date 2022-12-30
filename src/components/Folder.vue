@@ -114,7 +114,6 @@ const handleCopyPath = (type: "folder" | "file", fileId?: string) => {
       <Input
         :action-type="actionType"
         :gap="gap * 5"
-        :is-folder="true"
         @on-enter="renameFolderOrFile(folder.id)"
       />
     </div>

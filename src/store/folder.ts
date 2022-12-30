@@ -182,11 +182,7 @@ export const useFolder = defineStore("folder", {
       if (!folder) return [];
       return folder.files
         .map(({ id, title }) =>
-          state.actionType === "file"
-            ? id === state.renameId
-              ? ""
-              : title.toLocaleLowerCase()
-            : title.toLocaleLowerCase()
+          id === state.renameId ? "" : title.toLocaleLowerCase()
         )
         .filter(Boolean);
     },
@@ -230,7 +226,19 @@ export const useFolder = defineStore("folder", {
       console.log("renameFolder", folderId);
     },
     renameFile(folderId: string, fileId: string) {
-      console.log("renameFolder", folderId, fileId);
+      let selectedFolder = this.folders.find(({ id }) => id === folderId);
+      if (!selectedFolder) return;
+      let selectedFile = selectedFolder.files.find(({ id }) => id === fileId);
+      if (!selectedFile) return;
+      let keys = selectedFile.path.split("/");
+      keys.pop();
+      selectedFile.path = `${keys.join("/")}/${this.title}`;
+      selectedFile.title = this.title;
+      this.selectedId = selectedFile.id;
+      this.renameId = null;
+      this.actionType = null;
+      this.title = "";
+      setFolders(this.folders);
     },
     deleteFolder(folderId: string) {
       let folder = this.folders.find(({ id }) => id === folderId);
@@ -379,7 +387,6 @@ export const useFolder = defineStore("folder", {
       }
     },
     renameFolderOrFile(folderId: string, fileId?: string) {
-      console.log(this.selectedId);
       this.validateTitle();
       if (this.error !== null || this.actionType === null) return;
       if (this.actionType === "folder") {
@@ -404,7 +411,6 @@ export const useFolder = defineStore("folder", {
             this.actionType === "file"
               ? this.existingFiles.includes(this.title.toLocaleLowerCase())
               : this.existingFolders.includes(this.title.toLocaleLowerCase());
-          console.log(this.existingFiles);
           if (isExist) {
             error = `A ${this.actionType === "file" ? "File" : "Folder"} <b>${
               this.title

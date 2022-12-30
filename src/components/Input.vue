@@ -8,7 +8,6 @@ import { getFileIcon } from "@/utils";
 type AddFolderProps = {
   gap?: number;
   actionType: ActionType;
-  isFolder?: boolean;
 };
 
 const emit = defineEmits(["onEnter"]);
