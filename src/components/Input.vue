@@ -7,7 +7,6 @@ import { getFileIcon } from "@/utils";
 
 type AddFolderProps = {
   gap?: number;
-  actionType: ActionType;
 };
 
 const emit = defineEmits(["onEnter"]);
@@ -20,24 +19,27 @@ const foldetStore = useFolder();
 
 const inputRef = ref<HTMLInputElement>();
 
-const { title, error } = storeToRefs(foldetStore);
+const { title, renameTitle, actionType, renameActionType, error } =
+  storeToRefs(foldetStore);
 
 const { validateTitle } = foldetStore;
 
-const { gap, actionType } = toRefs(props);
+const { gap } = toRefs(props);
 
 onMounted(() => {
   if (!inputRef.value) return;
   inputRef.value.focus();
 });
 
-const icon = computed(() => getFileIcon(title.value));
+const icon = computed(() =>
+  getFileIcon(actionType.value ? title.value : renameTitle.value)
+);
 </script>
 
 <template>
   <div :class="styles.container" :style="{ paddingLeft: `${gap}px` }">
     <svg
-      v-if="actionType === 'folder'"
+      v-if="actionType === 'folder' || renameActionType === 'folder'"
       xmlns="http://www.w3.org/2000/svg"
       width="12"
       height="12"
@@ -48,12 +50,26 @@ const icon = computed(() => getFileIcon(title.value));
         d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
       />
     </svg>
-    <img v-if="actionType === 'file'" :src="icon" />
+    <img
+      v-if="actionType === 'file' || renameActionType === 'file'"
+      :src="icon"
+    />
     <div :class="styles.field">
       <input
+        v-if="actionType !== null"
         ref="inputRef"
         type="text"
         v-model="title"
+        :aria-invalid="error !== null"
+        @keydown.enter="emit('onEnter')"
+        @input="validateTitle"
+        required
+      />
+      <input
+        v-if="renameActionType !== null"
+        ref="inputRef"
+        type="text"
+        v-model="renameTitle"
         :aria-invalid="error !== null"
         @keydown.enter="emit('onEnter')"
         @input="validateTitle"

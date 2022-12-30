@@ -126,7 +126,9 @@ export const useFolder = defineStore("folder", {
       selectedId: null,
       renameId: null,
       actionType: null,
+      renameActionType: null,
       title: "",
+      renameTitle: "",
       error: null,
       drag: {
         source: {
@@ -173,9 +175,8 @@ export const useFolder = defineStore("folder", {
         .map(({ title }) => title.toLocaleLowerCase());
     },
     existingFiles: (state): string[] => {
-      if (!state.selectedId && !state.renameId) return [];
       let folder = state.folders.find(({ id, files }) =>
-        state.selectedId
+        state.actionType
           ? id === state.selectedId
           : files.findIndex((file) => file.id === state.renameId) !== -1
       );
@@ -232,12 +233,10 @@ export const useFolder = defineStore("folder", {
       if (!selectedFile) return;
       let keys = selectedFile.path.split("/");
       keys.pop();
-      selectedFile.path = `${keys.join("/")}/${this.title}`;
-      selectedFile.title = this.title;
+      selectedFile.path = `${keys.join("/")}/${this.renameTitle}`;
+      selectedFile.title = this.renameTitle;
       this.selectedId = selectedFile.id;
-      this.renameId = null;
-      this.actionType = null;
-      this.title = "";
+      this.clearRename();
       setFolders(this.folders);
     },
     deleteFolder(folderId: string) {
@@ -367,10 +366,9 @@ export const useFolder = defineStore("folder", {
         renameId = fileId;
         title = selectedFile.title;
       }
-      this.title = title;
-      this.actionType = actionType;
+      this.renameTitle = title;
+      this.renameActionType = actionType;
       this.renameId = renameId;
-      this.selectedId = null;
     },
     createFolderOrFile() {
       this.validateTitle();
@@ -388,8 +386,8 @@ export const useFolder = defineStore("folder", {
     },
     renameFolderOrFile(folderId: string, fileId?: string) {
       this.validateTitle();
-      if (this.error !== null || this.actionType === null) return;
-      if (this.actionType === "folder") {
+      if (this.error !== null || this.renameActionType === null) return;
+      if (this.renameActionType === "folder") {
         this.renameFolder(folderId);
       } else {
         if (!fileId) return;
@@ -397,30 +395,36 @@ export const useFolder = defineStore("folder", {
       }
     },
     validateTitle() {
-      if (this.actionType === null) return;
+      if (this.actionType === null && this.renameActionType === null) return;
       let error: string | null = null;
-      if (this.title.length === 0) {
+      let title = this.actionType ? this.title : this.renameTitle;
+      if (title.length === 0) {
         error = `A ${
           this.actionType === "file" ? "File" : "Folder"
         } name must be provided`;
       } else {
-        if (this.title === ".") {
+        if (title === ".") {
           error = `The name <b>.</b> is not a valid as a file or folder name. So please choose different name.`;
         } else {
           let isExist =
-            this.actionType === "file"
-              ? this.existingFiles.includes(this.title.toLocaleLowerCase())
-              : this.existingFolders.includes(this.title.toLocaleLowerCase());
+            this.actionType === "file" || this.renameActionType === "file"
+              ? this.existingFiles.includes(title.toLocaleLowerCase())
+              : this.existingFolders.includes(title.toLocaleLowerCase());
           if (isExist) {
-            error = `A ${this.actionType === "file" ? "File" : "Folder"} <b>${
-              this.title
-            }</b> already exists at this location. Please choose a different name`;
+            error = `A ${
+              this.actionType === "file" ? "File" : "Folder"
+            } <b>${title}</b> already exists at this location. Please choose a different name`;
           } else {
             error = null;
           }
         }
       }
       this.error = error;
+    },
+    clearRename() {
+      this.renameActionType = null;
+      this.renameId = null;
+      this.renameTitle = "";
     },
   },
 });

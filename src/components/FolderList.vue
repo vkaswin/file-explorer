@@ -8,7 +8,7 @@ import Input from "./Input.vue";
 import ScrollBar from "./ScrollBar.vue";
 
 const folderStore = useFolder();
-const { foldersList, selectedId, actionType, renameId } =
+const { foldersList, selectedId, actionType, renameId, renameActionType } =
   storeToRefs(folderStore);
 
 const {
@@ -80,20 +80,17 @@ const handleIcon = (actionType: ActionType) => {
       </div>
     </div>
     <div :class="styles.wrapper" @dragover.prevent @drop="handleDrop">
-      <Folder
-        v-for="folder in foldersList"
-        :key="folder.id"
-        :folder="folder"
-        :selected-id="selectedId"
-      />
+      <Folder v-for="folder in foldersList" :key="folder.id" :folder="folder" />
       <Input
         v-if="actionType && selectedId === null && renameId === null"
         :gap="5"
-        :action-type="actionType"
         @on-enter="createFolderOrFile"
       />
       <ScrollBar />
-      <div :class="styles.overlay" v-if="actionType !== null"></div>
+      <div
+        :class="styles.overlay"
+        v-if="actionType !== null || renameActionType !== null"
+      ></div>
     </div>
   </div>
 </template>

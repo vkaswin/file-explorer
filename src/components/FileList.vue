@@ -11,6 +11,7 @@ type FileProps = {
   selectedId: string | null;
   dragOver: boolean;
   renameId: string | null;
+  renameActionType: ActionType;
   actionType: ActionType;
 };
 
@@ -19,7 +20,7 @@ type EmitType = {
   (event: "onDragStart", type: "file", id: string): void;
   (event: "onDragEnter"): void;
   (
-    event: "onDelete" | "onRename" | "onCoypPath",
+    event: "onDelete" | "onRename" | "onCopyPath",
     type: "file",
     fileId: string
   ): void;
@@ -30,8 +31,20 @@ const dragId = ref<string | null>(null);
 
 const emit = defineEmits<EmitType>();
 
-const { files, dragOver, renameId, gap, actionType, selectedId } =
-  defineProps<FileProps>();
+const {
+  files,
+  dragOver,
+  renameId,
+  gap,
+  selectedId,
+  renameActionType,
+  actionType,
+} = defineProps<FileProps>();
+
+const handleMouseDown = (id: string) => {
+  if (renameActionType || actionType) return;
+  dragId.value = id;
+};
 </script>
 
 <template>
@@ -44,14 +57,13 @@ const { files, dragOver, renameId, gap, actionType, selectedId } =
       :style="{ paddingLeft: `${gap}px` }"
       :key="id"
       :draggable="dragId === id"
-      @mousedown="dragId = id"
+      @mousedown="handleMouseDown(id)"
       @click="emit('onSelect', id)"
       @dragstart="emit('onDragStart', 'file', id)"
       @dragenter="emit('onDragEnter')"
     >
       <Input
-        :action-type="actionType"
-        v-if="actionType && id === renameId"
+        v-if="renameActionType && id === renameId"
         @on-enter="emit('onEnter', id)"
       />
       <File v-else :title="title" />
@@ -59,7 +71,7 @@ const { files, dragOver, renameId, gap, actionType, selectedId } =
         :selector="`#file-${id}`"
         @on-delete="emit('onDelete', 'file', id)"
         @on-rename="emit('onRename', 'file', id)"
-        @on-copy-path="emit('onCoypPath', 'file', id)"
+        @on-copy-path="emit('onCopyPath', 'file', id)"
       />
     </div>
   </div>

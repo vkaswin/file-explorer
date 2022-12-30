@@ -2,7 +2,9 @@ export type FolderState = {
   selectedId: string | null;
   renameId: string | null;
   actionType: ActionType;
+  renameActionType: ActionType;
   title: string;
+  renameTitle: string;
   error: string | null;
   expandedFolderIds: string[];
   drag: {

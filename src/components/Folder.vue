@@ -10,13 +10,18 @@ import ContextMenu from "./ContextMenu.vue";
 type FolderProps = {
   gap?: number;
   folder: FolderType;
-  selectedId: string | null;
 };
 
 const folderStore = useFolder();
 
-const { selectedId, actionType, expandedFolderIds, folders, renameId } =
-  storeToRefs(folderStore);
+const {
+  selectedId,
+  actionType,
+  expandedFolderIds,
+  folders,
+  renameId,
+  renameActionType,
+} = storeToRefs(folderStore);
 
 const {
   setSelectedId,
@@ -29,6 +34,7 @@ const {
   setRenameId,
   createFolderOrFile,
   renameFolderOrFile,
+  clearRename,
 } = folderStore;
 
 const props = withDefaults(defineProps<FolderProps>(), {
@@ -51,7 +57,6 @@ const handleFolder = () => {
 const showInput = computed(() => {
   let isSelected =
     actionType.value &&
-    !renameId.value &&
     (selectedId.value === folder.value.id ||
       folder.value.files.findIndex(({ id }) => id === selectedId.value) !== -1);
   return isSelected;
@@ -101,6 +106,11 @@ const handleCopyPath = (type: "folder" | "file", fileId?: string) => {
   }
   navigator.clipboard.writeText(path);
 };
+
+const handleMouseDown = () => {
+  if (renameActionType.value || actionType.value) return;
+  isDragging.value = true;
+};
 </script>
 
 <template>
@@ -110,12 +120,8 @@ const handleCopyPath = (type: "folder" | "file", fileId?: string) => {
     @dragleave.stop="dragOver = false"
     @drop="dragOver = false"
   >
-    <div v-if="actionType && renameId === folder.id">
-      <Input
-        :action-type="actionType"
-        :gap="gap * 5"
-        @on-enter="renameFolderOrFile(folder.id)"
-      />
+    <div v-if="renameActionType && renameId === folder.id">
+      <Input :gap="gap * 5" @on-enter="renameFolderOrFile(folder.id)" />
     </div>
     <div
       v-else
@@ -125,7 +131,7 @@ const handleCopyPath = (type: "folder" | "file", fileId?: string) => {
       tabindex="-1"
       :draggable="isDragging"
       :rename-id="renameId"
-      @mousedown="isDragging = true"
+      @mousedown="handleMouseDown"
       @click="handleFolder"
       @dragstart="handleDragStart('folder')"
       @dragenter="handleDragEnter"
@@ -150,20 +156,13 @@ const handleCopyPath = (type: "folder" | "file", fileId?: string) => {
       @on-delete="handleDelete('folder')"
       @on-copy-path="handleCopyPath('folder')"
     />
-    <Input
-      v-if="showInput"
-      :gap="gap * 5 + 5"
-      :action-type="actionType"
-      @on-enter="createFolderOrFile"
-    />
+    <Input v-if="showInput" :gap="gap * 5 + 5" @on-enter="createFolderOrFile" />
     <Folder
       v-if="folder.subFolders !== undefined && isOpen"
       v-for="subFolder in folder.subFolders"
       :gap="gap + 2"
       :key="subFolder.id"
       :folder="subFolder"
-      :selected-id="selectedId"
-      @on-select="setSelectedId"
     />
     <FileList
       v-if="isOpen"
@@ -172,13 +171,14 @@ const handleCopyPath = (type: "folder" | "file", fileId?: string) => {
       :files="folder.files"
       :selected-id="selectedId"
       :action-type="actionType"
+      :rename-action-type="renameActionType"
       :rename-id="renameId"
       @on-select="setSelectedId"
       @on-drag-start="handleDragStart"
       @on-drag-enter="handleDragEnter"
       @on-rename="handleRename"
       @on-delete="handleDelete"
-      @on-coyp-path="handleCopyPath"
+      @on-copy-path="handleCopyPath"
       @on-enter="(fileId) => renameFolderOrFile(folder.id, fileId)"
     />
   </div>
