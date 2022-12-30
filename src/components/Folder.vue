@@ -51,6 +51,7 @@ const handleFolder = () => {
 const showInput = computed(() => {
   let isSelected =
     actionType.value &&
+    !renameId.value &&
     (selectedId.value === folder.value.id ||
       folder.value.files.findIndex(({ id }) => id === selectedId.value) !== -1);
   return isSelected;

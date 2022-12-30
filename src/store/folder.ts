@@ -173,12 +173,22 @@ export const useFolder = defineStore("folder", {
         .map(({ title }) => title.toLocaleLowerCase());
     },
     existingFiles: (state): string[] => {
-      if (!state.selectedId || !state.renameId) return [];
-      let folder = state.folders.find(
-        ({ id }) => id === state.renameId || state.selectedId
+      if (!state.selectedId && !state.renameId) return [];
+      let folder = state.folders.find(({ id, files }) =>
+        state.selectedId
+          ? id === state.selectedId
+          : files.findIndex((file) => file.id === state.renameId) !== -1
       );
       if (!folder) return [];
-      return folder.files.map(({ title }) => title.toLocaleLowerCase());
+      return folder.files
+        .map(({ id, title }) =>
+          state.actionType === "file"
+            ? id === state.renameId
+              ? ""
+              : title.toLocaleLowerCase()
+            : title.toLocaleLowerCase()
+        )
+        .filter(Boolean);
     },
   },
   actions: {
@@ -210,6 +220,13 @@ export const useFolder = defineStore("folder", {
       setFolders(this.folders);
     },
     renameFolder(folderId: string) {
+      let selectedFolder = this.folders.find(({ id }) => id === folderId);
+      if (!selectedFolder) return;
+      for (let folder of this.folders) {
+        if (folder.path.startsWith(selectedFolder.path)) {
+          console.log(folder);
+        }
+      }
       console.log("renameFolder", folderId);
     },
     renameFile(folderId: string, fileId: string) {
@@ -362,6 +379,7 @@ export const useFolder = defineStore("folder", {
       }
     },
     renameFolderOrFile(folderId: string, fileId?: string) {
+      console.log(this.selectedId);
       this.validateTitle();
       if (this.error !== null || this.actionType === null) return;
       if (this.actionType === "folder") {
@@ -386,6 +404,7 @@ export const useFolder = defineStore("folder", {
             this.actionType === "file"
               ? this.existingFiles.includes(this.title.toLocaleLowerCase())
               : this.existingFolders.includes(this.title.toLocaleLowerCase());
+          console.log(this.existingFiles);
           if (isExist) {
             error = `A ${this.actionType === "file" ? "File" : "Folder"} <b>${
               this.title
