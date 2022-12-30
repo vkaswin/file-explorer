@@ -152,15 +152,23 @@ export const useFolder = defineStore("folder", {
     existingFolders: (state): string[] => {
       if (!state.selectedId && !state.renameId) return [];
       let folder = state.folders.find(
-        ({ id }) => id === state.renameId || state.selectedId
+        ({ id }) => id === (state.renameId || state.selectedId)
       );
       if (!folder) return [];
+      let folderPath: string;
+      folderPath = folder.path;
+      if (state.renameId) {
+        let keys = folder.path.split("/");
+        keys.pop();
+        folderPath = keys.join("/");
+      }
       return state.folders
         .filter(
           ({ path }) =>
+            path !== folderPath &&
             path !== folder!.path &&
-            path.startsWith(folder!.path) &&
-            !path.substring(folder!.path.length + 1).includes("/")
+            path.startsWith(folderPath) &&
+            !path.substring(folderPath.length + 1).includes("/")
         )
         .map(({ title }) => title.toLocaleLowerCase());
     },
@@ -337,6 +345,7 @@ export const useFolder = defineStore("folder", {
       this.title = title;
       this.actionType = actionType;
       this.renameId = renameId;
+      this.selectedId = null;
     },
     createFolderOrFile() {
       this.validateTitle();
@@ -377,7 +386,6 @@ export const useFolder = defineStore("folder", {
             this.actionType === "file"
               ? this.existingFiles.includes(this.title.toLocaleLowerCase())
               : this.existingFolders.includes(this.title.toLocaleLowerCase());
-          console.log(this.existingFiles, this.existingFolders);
           if (isExist) {
             error = `A ${this.actionType === "file" ? "File" : "Folder"} <b>${
               this.title
