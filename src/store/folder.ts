@@ -221,10 +221,20 @@ export const useFolder = defineStore("folder", {
       if (!selectedFolder) return;
       for (let folder of this.folders) {
         if (folder.path.startsWith(selectedFolder.path)) {
-          console.log(folder);
+          let path = selectedFolder.path.split("/");
+          let title = this.renameTitle;
+          path.splice(path.length - 1, 1, title);
+          folder.path = path.join("/");
+          folder.title = title;
+          folder.files.forEach((file) => {
+            let filePath = file.path.split("/");
+            filePath.splice(filePath.length - 2, 1, title);
+            file.path = filePath.join("/");
+          });
         }
       }
-      console.log("renameFolder", folderId);
+      this.clearRename();
+      setFolders(this.folders);
     },
     renameFile(folderId: string, fileId: string) {
       let selectedFolder = this.folders.find(({ id }) => id === folderId);
@@ -305,7 +315,6 @@ export const useFolder = defineStore("folder", {
         } else if (sourceFolder && destinationFoler) break;
       }
       if (!sourceFolder || !destinationFoler) return;
-
       if (source.type === "file") {
         let index = sourceFolder.files.findIndex(
           ({ id }) => id === source.fileId
