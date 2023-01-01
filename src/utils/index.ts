@@ -25,6 +25,9 @@ type Extension =
   | "dockerfile"
   | "svelte"
   | "prisma"
+  | "ico"
+  | "gitignore"
+  | "md"
   | "elixir";
 
 export const extensions = [
@@ -55,6 +58,9 @@ export const extensions = [
   "svelte",
   "prisma",
   "elixir",
+  "md",
+  "gitignore",
+  "ico",
 ];
 
 export const getFileIcon = (fileName: string) => {
@@ -170,6 +176,18 @@ export const getFileIcon = (fileName: string) => {
 
     case "elixir":
       icon = "elixir";
+      break;
+
+    case "ico":
+      icon = "favicon";
+      break;
+
+    case "md":
+      icon = "readme";
+      break;
+
+    case "gitignore":
+      icon = "git";
       break;
 
     default:

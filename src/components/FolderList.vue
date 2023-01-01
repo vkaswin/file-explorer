@@ -26,12 +26,10 @@ onMounted(() => {
     localStorage.getItem("expandedFolderIds") ?? "[]"
   );
   let folders = JSON.parse(localStorage.getItem("folders") ?? "[]");
-  if (Array.isArray(folders) && folders.length > 0) {
-    setFolders(folders as FolderType[]);
-  }
   if (Array.isArray(expandedFolderIds) && expandedFolderIds.length > 0) {
     setExpandedFolderIds(expandedFolderIds);
   }
+  setFolders(folders as FolderType[]);
 });
 
 const handleClickOutSide = (event: MouseEvent) => {

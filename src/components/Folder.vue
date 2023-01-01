@@ -6,6 +6,7 @@ import { useFolder } from "@/store/folder";
 import { storeToRefs } from "pinia";
 import Input from "./Input.vue";
 import ContextMenu from "./ContextMenu.vue";
+import { getFileIcon } from "@/utils";
 
 type FolderProps = {
   gap?: number;
@@ -18,7 +19,6 @@ const {
   selectedId,
   actionType,
   expandedFolderIds,
-  folders,
   renameId,
   renameActionType,
 } = storeToRefs(folderStore);
@@ -126,18 +126,25 @@ const handleMouseDown = () => {
       @dragstart="handleDragStart('folder')"
       @dragenter="handleDragEnter"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" v-if="isOpen">
-        <path
-          fill-rule="evenodd"
-          d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"
-        />
-      </svg>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" v-else>
-        <path
-          fill-rule="evenodd"
-          d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
-        />
-      </svg>
+      <img v-if="folder.isFile" :src="getFileIcon(folder.title)" />
+      <div v-else>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 16 16"
+          v-if="isOpen"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"
+          />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" v-else>
+          <path
+            fill-rule="evenodd"
+            d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
+          />
+        </svg>
+      </div>
       <span>{{ folder.title }}</span>
     </div>
     <ContextMenu
@@ -209,6 +216,10 @@ const handleMouseDown = () => {
       fill: #cccccc;
       width: 15px;
       height: 15px;
+    }
+    img {
+      width: 17px;
+      height: 17px;
     }
   }
 }

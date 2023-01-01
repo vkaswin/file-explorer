@@ -35,6 +35,7 @@ export type Folder = {
   title: string;
   path: string;
   files: Files[];
+  isFile?: boolean;
   subFolders?: Folder[];
 };
 
