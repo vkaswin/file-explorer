@@ -154,13 +154,13 @@ const toggleOption = (event: EventName) => {
       background-color: #05395e;
     }
     svg {
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       fill: #cccccc;
     }
     span {
       color: #cccccc;
-      font-size: 12px;
+      font-size: 14px;
     }
   }
 }

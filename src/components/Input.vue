@@ -91,8 +91,8 @@ const icon = computed(() =>
     fill: #cccccc;
   }
   img {
-    width: 15px;
-    height: 15px;
+    width: 18px;
+    height: 18px;
   }
   .field {
     position: relative;
@@ -102,9 +102,9 @@ const icon = computed(() =>
       border-color: #017fd4;
       background-color: #2a2d2e;
       color: #cccccc;
-      font-size: 14px;
+      font-size: 16px;
       padding: 0px 5px;
-      height: 25px;
+      height: 32px;
       width: 100%;
       outline: none;
       font-family: "Poppins", sans-serif;
@@ -121,7 +121,7 @@ const icon = computed(() =>
       background-color: #561e1e;
       color: white;
       border-top: 0px;
-      font-size: 12px;
+      font-size: 14px;
       padding: 5px 10px;
     }
   }

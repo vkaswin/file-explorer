@@ -24,6 +24,7 @@ type EmitType = {
     type: "file",
     fileId: string
   ): void;
+  (event: "onCopyPath", path: string): void;
   (event: "onEnter", fileId: string): void;
 };
 
@@ -56,7 +57,7 @@ const handleMouseDown = (id: string) => {
       :class="[styles.title, { [styles.selected]: id === selectedId }]"
       :style="{ paddingLeft: `${gap}px` }"
       :key="id"
-      :draggable="dragId === id"
+      :draggable="dragId === id && !actionType && !renameActionType"
       @mousedown="handleMouseDown(id)"
       @click="emit('onSelect', id)"
       @dragstart="emit('onDragStart', 'file', id)"
@@ -71,7 +72,7 @@ const handleMouseDown = (id: string) => {
         :selector="`#file-${id}`"
         @on-delete="emit('onDelete', 'file', id)"
         @on-rename="emit('onRename', 'file', id)"
-        @on-copy-path="emit('onCopyPath', 'file', id)"
+        @on-copy-path="emit('onCopyPath', path)"
       />
     </div>
   </div>

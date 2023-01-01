@@ -110,7 +110,7 @@ const handleIcon = (actionType: ActionType) => {
     gap: 10px;
     padding: 10px;
     b {
-      font-size: 16px;
+      font-size: 18px;
       color: #cccccc;
     }
     .add_icon {
@@ -122,12 +122,12 @@ const handleIcon = (actionType: ActionType) => {
         user-select: none;
         cursor: pointer;
         &:first-child {
-          width: 17px;
-          height: 17px;
+          width: 19px;
+          height: 19px;
         }
         &:last-child {
-          width: 18px;
-          height: 18px;
+          width: 20px;
+          height: 20px;
         }
       }
     }

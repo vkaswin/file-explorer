@@ -381,12 +381,7 @@ export const useFolder = defineStore("folder", {
     },
     createFolderOrFile() {
       this.validateTitle();
-      if (
-        this.error !== null ||
-        !this.selectedFolder ||
-        this.actionType === null
-      )
-        return;
+      if (this.error !== null || this.actionType === null) return;
       if (this.actionType === "folder") {
         this.createFolder();
       } else {

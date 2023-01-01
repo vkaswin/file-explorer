@@ -23,10 +23,10 @@ const fileIcon = computed(() => {
 <style scoped>
 span {
   color: #cccccc;
-  font-size: 14px;
+  font-size: 16px;
 }
 img {
-  width: 14px;
-  height: 14px;
+  width: 17px;
+  height: 17px;
 }
 </style>

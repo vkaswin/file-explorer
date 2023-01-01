@@ -93,17 +93,7 @@ const handleRename = (type: "folder" | "file", fileId?: string) => {
   setRenameId(type, folder.value.id, fileId);
 };
 
-const handleCopyPath = (type: "folder" | "file", fileId?: string) => {
-  let path: string | undefined;
-  let selectedFolder = folders.value.find(({ id }) => id === folder.value.id);
-  if (!selectedFolder) return;
-  if (type === "file" && fileId) {
-    let file = selectedFolder.files.find(({ id }) => id === fileId);
-    if (!file) return;
-    path = file.path;
-  } else {
-    path = selectedFolder.path;
-  }
+const handleCopyPath = (path: string) => {
   navigator.clipboard.writeText(path);
 };
 
@@ -129,7 +119,7 @@ const handleMouseDown = () => {
       :class="[styles.title, { [styles.selected]: folder.id === selectedId }]"
       :style="{ paddingLeft: `${gap * 5}px` }"
       tabindex="-1"
-      :draggable="isDragging"
+      :draggable="isDragging && !actionType && !renameActionType"
       :rename-id="renameId"
       @mousedown="handleMouseDown"
       @click="handleFolder"
@@ -154,7 +144,7 @@ const handleMouseDown = () => {
       :selector="`#folder-${folder.id}`"
       @on-rename="handleRename('folder')"
       @on-delete="handleDelete('folder')"
-      @on-copy-path="handleCopyPath('folder')"
+      @on-copy-path="handleCopyPath(folder.path)"
     />
     <Input v-if="showInput" :gap="gap * 5 + 5" @on-enter="createFolderOrFile" />
     <Folder
@@ -217,8 +207,8 @@ const handleMouseDown = () => {
     }
     svg {
       fill: #cccccc;
-      width: 12px;
-      height: 12px;
+      width: 15px;
+      height: 15px;
     }
   }
 }
