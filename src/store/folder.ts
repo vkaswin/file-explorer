@@ -132,32 +132,31 @@ const initialValue: Folder[] = [
     path: "/dist/fonts",
   },
   {
-    id: "9496cc8a-43e5-40c4-8c25-2d75b0cd7b04",
-    files: [],
-    isFile: true,
-    path: "/README.md",
-    title: "README.md",
-  },
-  {
-    id: "39f1657c-c48e-490e-8c29-1c80ddd2042c",
-    files: [],
-    isFile: true,
-    path: "/package.json",
-    title: "package.json",
-  },
-  {
-    id: "a25e7ab8-b402-416e-b7da-9c0f66342f92",
-    files: [],
-    isFile: true,
-    path: "/package-lock.json",
-    title: "package-lock.json",
-  },
-  {
-    id: "5bf9c145-3d8a-4c31-853d-9eed9a25667a",
-    files: [],
-    isFile: true,
-    path: "/.gitignore",
-    title: ".gitignore",
+    id: "706c8792-6e41-4785-930e-50d9b678edb3",
+    path: "/",
+    title: "",
+    files: [
+      {
+        id: "9496cc8a-43e5-40c4-8c25-2d75b0cd7b04",
+        path: "/README.md",
+        title: "README.md",
+      },
+      {
+        id: "39f1657c-c48e-490e-8c29-1c80ddd2042c",
+        path: "/package.json",
+        title: "package.json",
+      },
+      {
+        id: "a25e7ab8-b402-416e-b7da-9c0f66342f92",
+        path: "/package-lock.json",
+        title: "package-lock.json",
+      },
+      {
+        id: "5bf9c145-3d8a-4c31-853d-9eed9a25667a",
+        path: "/.gitignore",
+        title: ".gitignore",
+      },
+    ],
   },
 ];
 
@@ -204,11 +203,12 @@ const getRootFolder: GetRootFolder = (path, rootFolders) => {
 export const groupFoldersByPath: GroupFoldersByPath = (folders) => {
   let rootFolders: Folder[] = [];
   let subFolders: Folder[] = [];
-  let rootFiles: Folder[] = [];
+  let rootFiles: Folder | undefined;
 
   for (const folder of folders) {
-    if (folder.isFile) {
-      rootFiles.push(folder);
+    if (folder.title.length === 0 && folder.path === "/") {
+      folder.files = folder.files.sort(sortFunction);
+      rootFiles = folder;
     } else {
       folder.path.substring(1).includes("/")
         ? subFolders.push(folder)
@@ -237,9 +237,9 @@ export const groupFoldersByPath: GroupFoldersByPath = (folders) => {
     rootFolders[i] = sortSubFoldersAndFiles(rootFolder);
   }
 
-  rootFiles = rootFiles.sort(sortFunction);
+  rootFiles && rootFolders.push(rootFiles);
 
-  return rootFolders.concat(rootFiles);
+  return rootFolders;
 };
 
 const sortFunction: SortFunction = (a, b) =>
@@ -365,9 +365,11 @@ export const useFolder = defineStore("folder", {
         title: this.title,
         path: this.selectedFolder
           ? `${this.selectedFolder.path}/${this.title}`
-          : this.title,
+          : `/${this.title}`,
       };
-      let index = this.folders.findIndex(({ id }) => id === this.selectedId);
+      let index = this.folders.findIndex(({ id, path }) =>
+        this.selectedId ? id === this.selectedId : path === "/"
+      );
       if (index === -1) return;
       this.folders[index].files.push(file);
       this.toggleAddIcon();

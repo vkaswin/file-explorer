@@ -63,7 +63,9 @@ const showInput = computed(() => {
 });
 
 const isOpen = computed(() => {
-  return expandedFolderIds.value.includes(folder.value.id);
+  return folder.value.path !== "/"
+    ? expandedFolderIds.value.includes(folder.value.id)
+    : true;
 });
 
 const handleDragStart = (type: "folder" | "file", id?: string) => {
@@ -113,46 +115,46 @@ const handleMouseDown = () => {
     <div v-if="renameActionType && renameId === folder.id">
       <Input :gap="gap * 5" @on-enter="renameFolderOrFile(folder.id)" />
     </div>
-    <div
-      v-else
-      :id="`folder-${folder.id}`"
-      :class="[styles.title, { [styles.selected]: folder.id === selectedId }]"
-      :style="{ paddingLeft: `${gap * 5}px` }"
-      tabindex="-1"
-      :draggable="isDragging && !actionType && !renameActionType"
-      :rename-id="renameId"
-      @mousedown="handleMouseDown"
-      @click="handleFolder"
-      @dragstart="handleDragStart('folder')"
-      @dragenter="handleDragEnter"
-    >
-      <img v-if="folder.isFile" :src="getFileIcon(folder.title)" />
-      <div v-else>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 16 16"
-          v-if="isOpen"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"
-          />
-        </svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" v-else>
-          <path
-            fill-rule="evenodd"
-            d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
-          />
-        </svg>
+    <div v-else>
+      <div
+        :id="`folder-${folder.id}`"
+        :class="[styles.title, { [styles.selected]: folder.id === selectedId }]"
+        :style="{ paddingLeft: `${gap * 5}px` }"
+        tabindex="-1"
+        :draggable="isDragging && !actionType && !renameActionType"
+        :rename-id="renameId"
+        @mousedown="handleMouseDown"
+        @click="handleFolder"
+        @dragstart="handleDragStart('folder')"
+        @dragenter="handleDragEnter"
+      >
+        <div v-if="folder.path !== '/'">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 16"
+            v-if="isOpen"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"
+            />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" v-else>
+            <path
+              fill-rule="evenodd"
+              d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"
+            />
+          </svg>
+        </div>
+        <span>{{ folder.title }}</span>
       </div>
-      <span>{{ folder.title }}</span>
+      <ContextMenu
+        :selector="`#folder-${folder.id}`"
+        @on-rename="handleRename('folder')"
+        @on-delete="handleDelete('folder')"
+        @on-copy-path="handleCopyPath(folder.path)"
+      />
     </div>
-    <ContextMenu
-      :selector="`#folder-${folder.id}`"
-      @on-rename="handleRename('folder')"
-      @on-delete="handleDelete('folder')"
-      @on-copy-path="handleCopyPath(folder.path)"
-    />
     <Input v-if="showInput" :gap="gap * 5 + 5" @on-enter="createFolderOrFile" />
     <Folder
       v-if="folder.subFolders !== undefined && isOpen"
@@ -163,7 +165,7 @@ const handleMouseDown = () => {
     />
     <FileList
       v-if="isOpen"
-      :gap="gap * 5 + 10"
+      :gap="folder.path === '/' ? 5 : gap * 5 + 10"
       :drag-over="dragOver"
       :files="folder.files"
       :selected-id="selectedId"
@@ -207,6 +209,11 @@ const handleMouseDown = () => {
     }
     &:hover:not(:focus) {
       background-color: #2a2d2e;
+    }
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
     span {
       color: #cccccc;
