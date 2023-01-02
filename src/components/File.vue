@@ -16,16 +16,16 @@ const fileIcon = computed(() => {
 </script>
 
 <template>
-  <img :src="fileIcon" alt="" />
-  <span>{{ title }} </span>
+  <img :class="styles.icon" :src="fileIcon" alt="" />
+  <span :class="styles.title">{{ title }} </span>
 </template>
 
-<style scoped>
-span {
+<style lang="scss" module="styles">
+.title {
   color: #cccccc;
   font-size: 16px;
 }
-img {
+.icon {
   width: 17px;
   height: 17px;
 }

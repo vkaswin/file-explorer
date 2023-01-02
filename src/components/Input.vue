@@ -53,6 +53,7 @@ const icon = computed(() =>
     <img
       v-if="actionType === 'file' || renameActionType === 'file'"
       :src="icon"
+      alt=""
     />
     <div :class="styles.field">
       <input
