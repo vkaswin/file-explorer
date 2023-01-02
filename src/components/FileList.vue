@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import File from "./File.vue";
-import { ActionType, Files } from "@/types/Folder";
+import { Icon, Files } from "@/types/Folder";
 import ContextMenu from "./ContextMenu.vue";
 import Input from "./Input.vue";
 
@@ -11,8 +11,8 @@ type FileProps = {
   selectedId: string | null;
   dragOver: boolean;
   renameId: string | null;
-  renameActionType: ActionType;
-  actionType: ActionType;
+  renameType: Icon;
+  addType: Icon;
 };
 
 type EmitType = {
@@ -32,18 +32,11 @@ const dragId = ref<string | null>(null);
 
 const emit = defineEmits<EmitType>();
 
-const {
-  files,
-  dragOver,
-  renameId,
-  gap,
-  selectedId,
-  renameActionType,
-  actionType,
-} = defineProps<FileProps>();
+const { files, dragOver, renameId, gap, selectedId, renameType, addType } =
+  defineProps<FileProps>();
 
 const handleMouseDown = (id: string) => {
-  if (renameActionType || actionType) return;
+  if (renameType || addType) return;
   dragId.value = id;
 };
 </script>
@@ -57,14 +50,14 @@ const handleMouseDown = (id: string) => {
       :class="[styles.title, { [styles.selected]: id === selectedId }]"
       :style="{ paddingLeft: `${gap}px` }"
       :key="id"
-      :draggable="dragId === id && !actionType && !renameActionType"
+      :draggable="dragId === id && !addType && !renameType"
       @mousedown="handleMouseDown(id)"
       @click="emit('onSelect', id)"
       @dragstart="emit('onDragStart', 'file', id)"
       @dragenter="emit('onDragEnter')"
     >
       <Input
-        v-if="renameActionType && id === renameId"
+        v-if="renameType && id === renameId"
         @on-enter="emit('onEnter', id)"
       />
       <File v-else :title="title" />

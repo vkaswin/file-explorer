@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { toRefs, ref, onMounted, computed } from "vue";
-import { ActionType } from "@/types/Folder";
 import { storeToRefs } from "pinia";
 import { useFolder } from "@/store/folder";
 import { getFileIcon } from "@/utils";
@@ -19,7 +18,7 @@ const foldetStore = useFolder();
 
 const inputRef = ref<HTMLInputElement>();
 
-const { title, renameTitle, actionType, renameActionType, error } =
+const { title, renameTitle, addType, renameType, error } =
   storeToRefs(foldetStore);
 
 const { validateTitle } = foldetStore;
@@ -32,14 +31,14 @@ onMounted(() => {
 });
 
 const icon = computed(() =>
-  getFileIcon(actionType.value ? title.value : renameTitle.value)
+  getFileIcon(addType.value ? title.value : renameTitle.value)
 );
 </script>
 
 <template>
   <div :class="styles.container" :style="{ paddingLeft: `${gap}px` }">
     <svg
-      v-if="actionType === 'folder' || renameActionType === 'folder'"
+      v-if="addType === 'folder' || renameType === 'folder'"
       xmlns="http://www.w3.org/2000/svg"
       width="12"
       height="12"
@@ -51,13 +50,13 @@ const icon = computed(() =>
       />
     </svg>
     <img
-      v-if="actionType === 'file' || renameActionType === 'file'"
+      v-if="addType === 'file' || renameType === 'file'"
       :src="icon"
       alt=""
     />
     <div :class="styles.field">
       <input
-        v-if="actionType !== null"
+        v-if="addType !== null"
         ref="inputRef"
         type="text"
         v-model="title"
@@ -67,7 +66,7 @@ const icon = computed(() =>
         required
       />
       <input
-        v-if="renameActionType !== null"
+        v-if="renameType !== null"
         ref="inputRef"
         type="text"
         v-model="renameTitle"

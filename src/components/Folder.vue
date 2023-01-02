@@ -6,7 +6,6 @@ import { useFolder } from "@/store/folder";
 import { storeToRefs } from "pinia";
 import Input from "./Input.vue";
 import ContextMenu from "./ContextMenu.vue";
-import { getFileIcon } from "@/utils";
 
 type FolderProps = {
   gap?: number;
@@ -15,13 +14,8 @@ type FolderProps = {
 
 const folderStore = useFolder();
 
-const {
-  selectedId,
-  actionType,
-  expandedFolderIds,
-  renameId,
-  renameActionType,
-} = storeToRefs(folderStore);
+const { selectedId, addType, expandedFolderIds, renameId, renameType } =
+  storeToRefs(folderStore);
 
 const {
   setSelectedId,
@@ -34,7 +28,6 @@ const {
   setRenameId,
   createFolderOrFile,
   renameFolderOrFile,
-  clearRename,
 } = folderStore;
 
 const props = withDefaults(defineProps<FolderProps>(), {
@@ -56,7 +49,7 @@ const handleFolder = () => {
 
 const showInput = computed(() => {
   let isSelected =
-    actionType.value &&
+    addType.value &&
     (selectedId.value === folder.value.id ||
       folder.value.files.findIndex(({ id }) => id === selectedId.value) !== -1);
   return isSelected;
@@ -100,7 +93,7 @@ const handleCopyPath = (path: string) => {
 };
 
 const handleMouseDown = () => {
-  if (renameActionType.value || actionType.value) return;
+  if (renameType.value || addType.value) return;
   isDragging.value = true;
 };
 </script>
@@ -112,7 +105,7 @@ const handleMouseDown = () => {
     @dragleave.stop="dragOver = false"
     @drop="dragOver = false"
   >
-    <div v-if="renameActionType && renameId === folder.id">
+    <div v-if="renameType && renameId === folder.id">
       <Input :gap="gap * 5" @on-enter="renameFolderOrFile(folder.id)" />
     </div>
     <div v-else>
@@ -121,7 +114,7 @@ const handleMouseDown = () => {
         :class="[styles.title, { [styles.selected]: folder.id === selectedId }]"
         :style="{ paddingLeft: `${gap * 5}px` }"
         tabindex="-1"
-        :draggable="isDragging && !actionType && !renameActionType"
+        :draggable="isDragging && !addType && !renameType"
         :rename-id="renameId"
         @mousedown="handleMouseDown"
         @click="handleFolder"
@@ -169,8 +162,8 @@ const handleMouseDown = () => {
       :drag-over="dragOver"
       :files="folder.files"
       :selected-id="selectedId"
-      :action-type="actionType"
-      :rename-action-type="renameActionType"
+      :add-type="addType"
+      :rename-type="renameType"
       :rename-id="renameId"
       @on-select="setSelectedId"
       @on-drag-start="handleDragStart"

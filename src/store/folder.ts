@@ -8,7 +8,7 @@ import {
   SortFunction,
   DragSource,
   DragDestination,
-  ActionType,
+  Icon,
   Files,
 } from "@/types/Folder";
 
@@ -67,7 +67,7 @@ const initialValue: Folder[] = [
     files: [],
   },
   {
-    id: "81926f68-5600-478b-89a6-e5072345ce73",
+    id: "b65e6490-3748-47ae-9616-d17da63eeff6",
     title: "scss",
     path: "/src/assets/scss",
     files: [
@@ -200,7 +200,7 @@ const getRootFolder: GetRootFolder = (path, rootFolders) => {
   return folder;
 };
 
-export const groupFoldersByPath: GroupFoldersByPath = (folders) => {
+const groupFoldersByPath: GroupFoldersByPath = (folders) => {
   let rootFolders: Folder[] = [];
   let subFolders: Folder[] = [];
   let rootFiles: Folder | undefined;
@@ -282,8 +282,8 @@ export const useFolder = defineStore("folder", {
       expandedFolderIds: [],
       selectedId: null,
       renameId: null,
-      actionType: null,
-      renameActionType: null,
+      addType: null,
+      renameType: null,
       title: "",
       renameTitle: "",
       error: null,
@@ -333,7 +333,7 @@ export const useFolder = defineStore("folder", {
     },
     existingFiles: (state): string[] => {
       let folder = state.folders.find(({ id, files }) =>
-        state.actionType
+        state.addType
           ? id === state.selectedId
           : files.findIndex((file) => file.id === state.renameId) !== -1
       );
@@ -368,7 +368,7 @@ export const useFolder = defineStore("folder", {
           : `/${this.title}`,
       };
       let index = this.folders.findIndex(({ id, path }) =>
-        this.selectedId ? id === this.selectedId : path === "/"
+        this.selectedFolder ? id === this.selectedId : path === "/"
       );
       if (index === -1) return;
       this.folders[index].files.push(file);
@@ -429,9 +429,9 @@ export const useFolder = defineStore("folder", {
     setSelectedId(id: string) {
       this.selectedId = id;
     },
-    toggleAddIcon(actionType: ActionType = null) {
-      this.actionType = actionType;
-      if (!actionType) {
+    toggleAddIcon(addType: Icon = null) {
+      this.addType = addType;
+      if (!addType) {
         this.title = "";
         this.error = null;
       } else {
@@ -520,7 +520,7 @@ export const useFolder = defineStore("folder", {
       setExpandedFolderIds(this.expandedFolderIds);
     },
     setRenameId(
-      actionType: ActionType,
+      renameType: Icon,
       folderId: string | null,
       fileId?: string | null
     ) {
@@ -529,20 +529,20 @@ export const useFolder = defineStore("folder", {
       let selectedFolder = this.folders.find(({ id }) => id === folderId);
       if (!selectedFolder) return;
       title = selectedFolder.title;
-      if (actionType === "file" && fileId) {
+      if (renameType === "file" && fileId) {
         let selectedFile = selectedFolder.files.find(({ id }) => id === fileId);
         if (!selectedFile) return;
         renameId = fileId;
         title = selectedFile.title;
       }
       this.renameTitle = title;
-      this.renameActionType = actionType;
+      this.renameType = renameType;
       this.renameId = renameId;
     },
     createFolderOrFile() {
       this.validateTitle();
-      if (this.error !== null || this.actionType === null) return;
-      if (this.actionType === "folder") {
+      if (this.error !== null || this.addType === null) return;
+      if (this.addType === "folder") {
         this.createFolder();
       } else {
         this.createFile();
@@ -550,8 +550,8 @@ export const useFolder = defineStore("folder", {
     },
     renameFolderOrFile(folderId: string, fileId?: string) {
       this.validateTitle();
-      if (this.error !== null || this.renameActionType === null) return;
-      if (this.renameActionType === "folder") {
+      if (this.error !== null || this.renameType === null) return;
+      if (this.renameType === "folder") {
         this.renameFolder(folderId);
       } else {
         if (!fileId) return;
@@ -559,24 +559,25 @@ export const useFolder = defineStore("folder", {
       }
     },
     validateTitle() {
-      if (this.actionType === null && this.renameActionType === null) return;
+      if (this.addType === null && this.renameType === null) return;
       let error: string | null = null;
-      let title = this.actionType ? this.title : this.renameTitle;
+      let type = this.addType ? this.addType : this.renameType;
+      let title = this.addType ? this.title : this.renameTitle;
       if (title.length === 0) {
         error = `A ${
-          this.actionType === "file" ? "File" : "Folder"
+          type === "file" ? "File" : "Folder"
         } name must be provided`;
       } else {
         if (title === ".") {
           error = `The name <b>.</b> is not a valid as a file or folder name. So please choose different name.`;
         } else {
           let isExist =
-            this.actionType === "file" || this.renameActionType === "file"
+            type === "file"
               ? this.existingFiles.includes(title.toLocaleLowerCase())
               : this.existingFolders.includes(title.toLocaleLowerCase());
           if (isExist) {
             error = `A ${
-              this.actionType === "file" ? "File" : "Folder"
+              type === "file" ? "File" : "Folder"
             } <b>${title}</b> already exists at this location. Please choose a different name`;
           } else {
             error = null;
@@ -586,7 +587,7 @@ export const useFolder = defineStore("folder", {
       this.error = error;
     },
     clearRename() {
-      this.renameActionType = null;
+      this.renameType = null;
       this.renameId = null;
       this.renameTitle = "";
     },

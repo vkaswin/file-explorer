@@ -1,20 +1,30 @@
 <script setup lang="ts">
 import FolderList from "@/components/FolderList.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, onUnmounted } from "vue";
+import SearchFiles from "@/components/SearchFiles.vue";
 
-const isLoading = ref(true);
+const showSearchFile = ref(false);
 
 onMounted(() => {
-  document.fonts.onloadingdone = () => {
-    isLoading.value = false;
-  };
+  window.addEventListener("keydown", handleKeyDown);
 });
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", handleKeyDown);
+});
+
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.key === "p" && event.ctrlKey) {
+    event.preventDefault();
+    showSearchFile.value = true;
+  }
+};
 </script>
 
 <template>
-  <div v-if="isLoading">Loading...</div>
-  <div v-else :class="styles.container">
+  <div :class="styles.container">
     <FolderList />
+    <SearchFiles v-if="showSearchFile" />
   </div>
 </template>
 

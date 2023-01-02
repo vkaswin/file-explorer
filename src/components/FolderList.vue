@@ -2,13 +2,13 @@
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useFolder } from "@/store/folder";
-import { ActionType, Folder as FolderType } from "@/types/Folder";
+import { Icon, Folder as FolderType } from "@/types/Folder";
 import Folder from "./Folder.vue";
 import Input from "./Input.vue";
 import ScrollBar from "./ScrollBar.vue";
 
 const folderStore = useFolder();
-const { foldersList, selectedId, actionType, renameId, renameActionType } =
+const { foldersList, selectedId, addType, renameId, renameType } =
   storeToRefs(folderStore);
 
 const {
@@ -40,9 +40,9 @@ const handleClickOutSide = (event: MouseEvent) => {
   toggleAddIcon();
 };
 
-const handleIcon = (actionType: ActionType) => {
+const handleIcon = (addType: Icon) => {
   window.addEventListener("click", handleClickOutSide);
-  toggleAddIcon(actionType);
+  toggleAddIcon(addType);
 };
 </script>
 
@@ -80,14 +80,14 @@ const handleIcon = (actionType: ActionType) => {
     <div :class="styles.wrapper" @dragover.prevent @drop="handleDrop">
       <Folder v-for="folder in foldersList" :key="folder.id" :folder="folder" />
       <Input
-        v-if="actionType && selectedId === null && renameId === null"
+        v-if="addType && selectedId === null && renameId === null"
         :gap="5"
         @on-enter="createFolderOrFile"
       />
       <ScrollBar />
       <div
         :class="styles.overlay"
-        v-if="actionType !== null || renameActionType !== null"
+        v-if="addType !== null || renameType !== null"
       ></div>
     </div>
   </div>

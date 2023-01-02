@@ -1,8 +1,8 @@
 export type FolderState = {
   selectedId: string | null;
   renameId: string | null;
-  actionType: ActionType;
-  renameActionType: ActionType;
+  addType: Icon;
+  renameType: Icon;
   title: string;
   renameTitle: string;
   error: string | null;
@@ -49,7 +49,7 @@ export type GroupFoldersByPath = (folders: Folder[]) => Folder[];
 
 export type SortFunction = <T extends { title: string }>(a: T, b: T) => number;
 
-export type ActionType = "file" | "rename" | "folder" | null;
+export type Icon = "file" | "folder" | null;
 
 declare global {
   interface Crypto {
