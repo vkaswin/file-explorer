@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { getFileIcon, debounce } from "@/utils";
+import { debounce } from "@/utils";
 import { ref, onMounted, computed } from "vue";
 import { Files } from "@/types/Folder";
 import { useFolder } from "@/store/folder";
 import { storeToRefs } from "pinia";
+import SearchFile from "./SearchFile.vue";
 
 const searchText = ref("");
 const searchRef = ref<HTMLInputElement>();
@@ -27,9 +28,9 @@ const files = computed<Files[]>(() => {
   return folders.value.reduce((files, folder) => {
     folder.files.forEach((file) => {
       if (
-        file.title
-          .toLocaleLowerCase()
-          .includes(searchText.value.toLocaleLowerCase())
+        Array.from(searchText.value).some((word) =>
+          file.title.toLocaleLowerCase().includes(word)
+        )
       ) {
         files.push(file);
       }
@@ -55,17 +56,13 @@ const files = computed<Files[]>(() => {
         <span>No Files Found</span>
       </div>
       <template v-else>
-        <div
-          v-for="{ id, path, title } in files"
-          :key="id"
-          :class="[styles.list, id === selectedId && styles.selected]"
-        >
-          <img :class="styles.icon" :src="getFileIcon(title)" />
-          <div :class="styles.title">
-            <span>{{ title }}</span>
-            <span>{{ path }}</span>
-          </div>
-        </div>
+        <SearchFile
+          v-for="file in files"
+          :key="file.id"
+          :file="file"
+          :selectedId="selectedId"
+          :searchText="searchText"
+        />
       </template>
     </div>
   </div>
@@ -107,42 +104,6 @@ const files = computed<Files[]>(() => {
       margin: 10px auto;
       span {
         color: #c7c7c2;
-      }
-    }
-    .list {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      border-radius: 4px;
-      padding: 5px 15px;
-      cursor: pointer;
-      &:is(.selected) {
-        background-color: #05395e;
-        .title {
-          color: white;
-        }
-      }
-      &:hover:not(.selected) {
-        background-color: #2a2d2e;
-      }
-      .icon {
-        width: 20px;
-        height: 20px;
-      }
-      .title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        span {
-          &:first-child {
-            color: #c7c7c2;
-            font-size: 14px;
-          }
-          &:last-child {
-            color: #cccccc;
-            font-size: 13px;
-          }
-        }
       }
     }
   }
