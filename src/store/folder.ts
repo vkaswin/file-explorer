@@ -207,7 +207,7 @@ export const groupFoldersByPath: GroupFoldersByPath = (folders) => {
 
   for (const folder of folders) {
     if (folder.title.length === 0 && folder.path === "/") {
-      folder.files = folder.files.sort(sortFunction);
+      folder.files.sort(sortFunction);
       rootFiles = folder;
     } else {
       folder.path.substring(1).includes("/")
@@ -216,7 +216,7 @@ export const groupFoldersByPath: GroupFoldersByPath = (folders) => {
     }
   }
 
-  subFolders = subFolders.sort((a, b) =>
+  subFolders.sort((a, b) =>
     a.path.split("/").length > b.path.split("/").length ? 1 : -1
   );
 
@@ -226,10 +226,10 @@ export const groupFoldersByPath: GroupFoldersByPath = (folders) => {
     addSubFolder(folder, rootFolder);
   }
 
-  rootFolders = rootFolders.sort(sortFunction);
+  rootFolders.sort(sortFunction);
 
   for (let folder of rootFolders) {
-    folder.files = folder.files.sort(sortFunction);
+    folder.files.sort(sortFunction);
   }
 
   for (let i = 0; i < rootFolders.length; i++) {
@@ -252,11 +252,11 @@ const sortSubFoldersAndFiles = (rootFolder: Folder): Folder => {
   )
     return rootFolder;
 
-  rootFolder.subFolders = rootFolder.subFolders.sort(sortFunction);
+  rootFolder.subFolders.sort(sortFunction);
 
   for (let i = 0; i < rootFolder.subFolders.length; i++) {
     let subFolders = rootFolder.subFolders[i];
-    subFolders.files = subFolders.files.sort(sortFunction);
+    subFolders.files.sort(sortFunction);
     rootFolder.subFolders[i] = sortSubFoldersAndFiles(subFolders);
   }
 
