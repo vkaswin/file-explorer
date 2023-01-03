@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import FolderList from "@/components/FolderList.vue";
 import { onMounted, ref, onUnmounted } from "vue";
-import SearchPopup from "@/components/SearchPopup.vue";
+import Popup from "@/components/Popup.vue";
+import SearchFileList from "./components/SearchFileList.vue";
 
 const showSearchFile = ref(false);
 
@@ -24,7 +25,9 @@ const handleKeyDown = (event: KeyboardEvent) => {
 <template>
   <div :class="styles.container">
     <FolderList />
-    <SearchPopup v-if="showSearchFile" />
+    <Popup v-if="showSearchFile" v-slot="{ inputValue }">
+      <SearchFileList :search="inputValue" />
+    </Popup>
   </div>
 </template>
 

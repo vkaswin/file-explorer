@@ -5,13 +5,13 @@ import { toRefs, computed } from "vue";
 
 type SearchFileProps = {
   file: Files;
-  selectedId: string | null;
-  searchText: string;
+  highlight: boolean;
+  search: string;
 };
 
 const props = defineProps<SearchFileProps>();
 
-const { file, selectedId, searchText } = toRefs(props);
+const { file, highlight, search } = toRefs(props);
 
 const fileIcon = computed<string>(() => {
   return getFileIcon(file.value.title);
@@ -19,14 +19,17 @@ const fileIcon = computed<string>(() => {
 </script>
 
 <template>
-  <div :class="[styles.container, file.id === selectedId && styles.selected]">
+  <div
+    :class="[styles.container, highlight && styles.selected]"
+    :data-file-id="file.id"
+  >
     <img :class="styles.icon" :src="fileIcon" />
     <div :class="styles.title">
       <div :class="styles.file_name">
         <span
           v-for="(word, index) in file.title"
           :key="index"
-          :class="{ [styles.highlight]: searchText.includes(word) }"
+          :class="{ [styles.highlight]: search.includes(word) }"
           >{{ word }}</span
         >
       </div>
