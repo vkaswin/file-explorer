@@ -25,7 +25,7 @@ const fileIcon = computed<string>(() => {
   >
     <img :class="styles.icon" :src="fileIcon" />
     <div :class="styles.title">
-      <div :class="styles.file_name">
+      <div :class="styles.file">
         <span
           v-for="(word, index) in file.title"
           :key="index"
@@ -33,7 +33,9 @@ const fileIcon = computed<string>(() => {
           >{{ word }}</span
         >
       </div>
-      <span :class="styles.path">{{ file.path }}</span>
+      <div :class="styles.path">
+        <span>{{ file.path }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -63,20 +65,21 @@ const fileIcon = computed<string>(() => {
     display: flex;
     align-items: center;
     gap: 10px;
-    .file_name {
+    .file {
       span {
         color: #c7c7c2;
         font-size: 14px;
         font-weight: bold;
         &:is(.highlight) {
-          //   color: #2088d5;
           color: #0095ff;
         }
       }
     }
     .path {
-      color: #cccccc;
-      font-size: 13px;
+      span {
+        color: #cccccc;
+        font-size: 13px;
+      }
     }
   }
 }

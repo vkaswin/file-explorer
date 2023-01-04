@@ -39,7 +39,7 @@ const handleChange = debounce((event: Event) => {
   box-shadow: rgb(0 0 0 / 36%) 0px 0px 8px 2px;
   max-width: 500px;
   width: 100%;
-  padding: 10px 10px 0px 10px;
+  padding: 10px;
   input {
     background-color: #3c3c3c;
     border: 1px solid #017fd4;
@@ -51,21 +51,9 @@ const handleChange = debounce((event: Event) => {
     padding: 0px 10px;
     border-radius: 2px;
     width: 100%;
+    margin-bottom: 10px;
     &::placeholder {
       color: #cccccc;
-    }
-  }
-  .wrapper {
-    display: flex;
-    flex-direction: column;
-    margin: 5px 0px;
-    max-height: 300px;
-    overflow-y: auto;
-    .empty {
-      margin: 10px auto;
-      span {
-        color: #c7c7c2;
-      }
     }
   }
 }

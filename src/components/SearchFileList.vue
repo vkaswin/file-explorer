@@ -4,6 +4,7 @@ import { Files } from "@/types/Folder";
 import { useFolder } from "@/store/folder";
 import { storeToRefs } from "pinia";
 import SearchFile from "./SearchFile.vue";
+import { file } from "@babel/types";
 
 type SearchFileListProps = {
   search: string;
@@ -25,6 +26,9 @@ onUnmounted(() => {
 });
 
 const handleKeyDown = (event: KeyboardEvent) => {
+  if (!files.value || files.value.length === 0) return;
+  console.log("hello");
+
   if (event.key === "ArrowDown" || event.key === "ArrowUp") {
     if (event.key === "ArrowDown") {
       activeIndex.value =
@@ -46,16 +50,12 @@ const handleKeyDown = (event: KeyboardEvent) => {
   }
 };
 
-const files = computed<Files[]>(() => {
-  if (search.value.length === 0) return [];
+const files = computed<Files[] | null>(() => {
+  if (search.value.length === 0) return null;
 
   return folders.value.reduce((files, folder) => {
     folder.files.forEach((file) => {
-      if (
-        Array.from(search.value).some((word) =>
-          file.title.toLocaleLowerCase().includes(word)
-        )
-      ) {
+      if (file.title.toLocaleLowerCase().includes(search.value)) {
         files.push(file);
       }
     });
@@ -65,11 +65,8 @@ const files = computed<Files[]>(() => {
 </script>
 
 <template>
-  <div :class="styles.container">
-    <div v-if="search.length === 0" :class="styles.empty">
-      <span>Enter File Name</span>
-    </div>
-    <div v-else-if="files.length === 0" :class="styles.empty">
+  <div :class="styles.container" v-if="files">
+    <div :class="styles.empty" v-if="files.length === 0">
       <span>No Files Found</span>
     </div>
     <template v-else>
@@ -88,7 +85,6 @@ const files = computed<Files[]>(() => {
 .container {
   display: flex;
   flex-direction: column;
-  margin: 5px 0px;
   max-height: 300px;
   overflow-y: auto;
   .empty {
