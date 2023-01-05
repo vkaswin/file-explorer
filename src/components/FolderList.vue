@@ -17,6 +17,8 @@ const {
   setFolders,
   setExpandedFolderIds,
   createFolderOrFile,
+  setSelectedId,
+  setHover,
 } = folderStore;
 
 const folderRef = ref<HTMLDivElement>();
@@ -25,7 +27,11 @@ onMounted(() => {
   let expandedFolderIds = JSON.parse(
     localStorage.getItem("expandedFolderIds") ?? "[]"
   );
+  let selectedId = localStorage.getItem("selectedId") ?? null;
   let folders = JSON.parse(localStorage.getItem("folders") ?? "[]");
+  if (selectedId) {
+    setSelectedId(selectedId);
+  }
   if (Array.isArray(expandedFolderIds) && expandedFolderIds.length > 0) {
     setExpandedFolderIds(expandedFolderIds);
   }
@@ -77,11 +83,17 @@ const handleIcon = (addType: Icon) => {
         </svg>
       </div>
     </div>
-    <div :class="styles.wrapper" @dragover.prevent @drop="handleDrop">
+    <div
+      :class="styles.wrapper"
+      @dragover.prevent
+      @drop="handleDrop"
+      @mouseenter="setHover(true)"
+      @mouseleave="setHover(false)"
+    >
       <Folder v-for="folder in foldersList" :key="folder.id" :folder="folder" />
       <Input
         v-if="addType && selectedId === null && renameId === null"
-        :gap="5"
+        gap="5px"
         @on-enter="createFolderOrFile"
       />
       <ScrollBar />

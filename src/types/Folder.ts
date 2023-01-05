@@ -7,6 +7,7 @@ export type FolderState = {
   renameTitle: string;
   error: string | null;
   expandedFolderIds: string[];
+  hover: boolean;
   drag: {
     source: DragSource;
     destination: DragDestination;

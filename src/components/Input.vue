@@ -5,13 +5,13 @@ import { useFolder } from "@/store/folder";
 import { getFileIcon } from "@/utils";
 
 type AddFolderProps = {
-  gap?: number;
+  gap?: string;
 };
 
 const emit = defineEmits(["onEnter"]);
 
 const props = withDefaults(defineProps<AddFolderProps>(), {
-  gap: 5,
+  gap: "5px",
 });
 
 const foldetStore = useFolder();
@@ -36,7 +36,7 @@ const icon = computed(() =>
 </script>
 
 <template>
-  <div :class="styles.container" :style="{ paddingLeft: `${gap}px` }">
+  <div :class="styles.container" :style="{ '--gap': gap }">
     <svg
       v-if="addType === 'folder' || renameType === 'folder'"
       xmlns="http://www.w3.org/2000/svg"
@@ -86,6 +86,7 @@ const icon = computed(() =>
   display: flex;
   align-items: center;
   gap: 5px;
+  padding-left: var(--gap);
   z-index: 3;
   svg {
     fill: #cccccc;

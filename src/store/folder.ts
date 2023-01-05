@@ -168,6 +168,10 @@ const setExpandedFolderIds = (expandedFolderIds: string[]) => {
   localStorage.setItem("expandedFolderIds", JSON.stringify(expandedFolderIds));
 };
 
+const setSelectedId = (id: string) => {
+  localStorage.setItem("selectedId", id);
+};
+
 const addSubFolder: AddSubFolder = (folder, rootFolder) => {
   let folderPath = folder.path.split("/");
   folderPath.pop();
@@ -286,6 +290,7 @@ export const useFolder = defineStore("folder", {
       renameType: null,
       title: "",
       renameTitle: "",
+      hover: false,
       error: null,
       drag: {
         source: {
@@ -404,7 +409,7 @@ export const useFolder = defineStore("folder", {
       keys.pop();
       selectedFile.path = `${keys.join("/")}/${this.renameTitle}`;
       selectedFile.title = this.renameTitle;
-      this.selectedId = selectedFile.id;
+      this.setSelectedId(selectedFile.id);
       this.clearRename();
       setFolders(this.folders);
     },
@@ -426,8 +431,9 @@ export const useFolder = defineStore("folder", {
       files.splice(fileIndex, 1);
       setFolders(this.folders);
     },
-    setSelectedId(id: string) {
+    setSelectedId(id: string | null) {
       this.selectedId = id;
+      setSelectedId(id ?? "");
     },
     toggleAddIcon(addType: Icon = null) {
       this.addType = addType;
@@ -591,7 +597,8 @@ export const useFolder = defineStore("folder", {
       this.renameId = null;
       this.renameTitle = "";
     },
+    setHover(value: boolean) {
+      this.hover = value;
+    },
   },
 });
-
-// [{"id":"37375e14-e00f-4af0-9cb0-4caa5858a084","title":"src","path":"/src","files":[{"id":"c00e4996-486e-4e66-8466-148ac8a8aee2","title":"index.js","path":"/src/index.js"}]},{"id":"1723237d-4f5c-4417-bbdc-7ddf94dad885","title":"node_modules","path":"/node_modules","files":[]},{"id":"42e69ea4-de9f-4ce7-ab36-4223a343733f","title":"store","path":"/store","files":[]},{"id":"a10c3de4-387a-4a86-bc48-7ba5ed1d068a","title":"helper","path":"/helper","files":[]},{"id":"e2bc9c56-ba65-4ad7-bd52-1b3c2e50ed97","title":"components","path":"/components","files":[{"id":"7153eec6-c1c9-40ac-8044-5a1c6f217b9a","title":"index.js","path":"/components/index.js"}]},{"id":"de2ede25-03d6-4537-9f5b-784c0150111b","title":"types","path":"/types","files":[]},{"id":"7c7f8484-01cc-410a-84c9-02e69deda4a4","title":"public","path":"/public","files":[{"id":"21c1cfba-0938-44cb-b131-30d997a0da9b","title":"favicon.ico","path":"/public/favicon.ico"},{"id":"ecf20273-8f16-4032-8c2a-1f89a1c2b548","title":"index.html","path":"/public/index.html"}]},{"id":"81926f68-5600-478b-89a6-e5072345ce73","title":"assets","path":"/public/assets","files":[{"id":"d342f5cd-bdd4-4c55-98f6-67e7ab0e934c","title":"index.html","path":"/public/assets/index.html"},{"id":"f155be6e-f5a8-47d1-ba8f-c4cf00f470ed","title":"favicon.ico","path":"/public/assets/favicon.ico"}]},{"id":"c9c0319b-f1c5-4684-9366-ae4207fdd01b","title":"images","path":"/public/assets/images","files":[{"id":"bb987d93-173c-439f-b2bf-e421bbcc4e53","title":"index.html","path":"/public/assets/images/index.html"},{"id":"bc08fe7c-531c-4850-a060-fd8f61432a2c","title":"favicon.ico","path":"/public/assets/images/favicon.ico"}]},{"id":"914c508e-183e-4dc3-9bb8-aa800e5b0609","title":"js","path":"/public/assets/js","files":[{"id":"e1da43de-d613-4ab9-ac3b-bf557f2487c5","title":"index.html","path":"/public/assets/js/index.html"},{"id":"d9eb0ca9-f530-4f4a-aee7-3e597a052597","title":"favicon.ico","path":"/public/assets/js/favicon.ico"}]},{"id":"64f80e6d-7197-4a53-9513-874d92da3ac0","title":"html","path":"/public/html","files":[{"id":"220e6b20-6108-400f-90f4-afe0f52d21c0","title":"index.html","path":"/public/html/index.html"},{"id":"8943ea27-e4a9-4c08-b90c-caa0e34b420e","title":"favicon.ico","path":"/public/html/favicon.ico"}]},{"id":"f49fa34c-f140-4cd3-9e79-9b7ca5179d65","title":"Hello","path":"/src/Test/Demo/Hello","files":[{"id":"ee3dd6f8-773b-4f8a-a06a-bcda818a94b0","title":"style.scss","path":"/src/Test/Demo/Hello/style.scss"},{"id":"4c388ad4-f04b-42b1-b1c0-cd12fd01ea80","title":"hello.js","path":"/src/Test/Demo/Hello/hello.js"},{"id":"7d82608e-abb9-43e3-80cf-4a8e2fd685e3","title":"index.js","path":"/src/Test/Demo/Hello/index.js"}]},{"id":"c8c3c1e3-5f77-41c9-93d5-32d4b5e14a47","title":"World","path":"/src/World","files":[{"id":"80597528-ae24-47b0-9d44-598f28f2abc9","title":"hello.js","path":"/src/World/hello.js"},{"id":"5e7951ec-3ba6-45bc-a628-872b690df28c","title":"index.js","path":"/src/World/index.js"}]},{"id":"554b3e06-f6ad-4454-b35d-babb9c814a64","title":"Bye","path":"/src/Test/Demo/Hello/Bye","files":[{"id":"9eb3a068-781d-4177-bbc7-758e2687b9cc","title":"hello.js","path":"/src/Test/Demo/Hello/hello.js"},{"id":"7845f670-5c80-477d-bd9e-0559f0630f2b","title":"index.js","path":"/src/Test/Demo/Hello/index.js"}]},{"id":"a6f514b1-1a9a-4313-8c57-f31899c60041","title":"World","path":"/src/Test/Demo/World","files":[{"id":"c2d0a0ed-2a67-4aa2-b6e8-b8a592f7d060","title":"index.js","path":"/src/Test/Demo/HelloWorld/World"}]},{"id":"2c2e30aa-3a35-49a1-890a-7bc6b92a6504","title":"Demo","path":"/src/World/Demo","files":[{"id":"1764925e-99e3-4177-9180-7c49bfafe259","title":"hello.js","path":"/src/World/Demo/hello.js"},{"id":"ca64055d-d03d-444b-9b42-2a0370da9689","title":"index.js","path":"/src/World/Demo/index.js"}]},{"id":"ee61ac8a-fdda-45b6-a10a-8249a18fafb6","title":"Test","path":"/src/Test","files":[{"id":"6af668fa-524e-45b3-a7ff-d6750eb67f53","title":"test.js","path":"/src/Test/test.js"}]},{"id":"2695121d-3246-4b77-a4ce-824acc74bd01","title":"Demo","path":"/src/Test/Demo","files":[{"id":"f6736037-bc17-40fe-9345-60f7c6cb4599","title":"demo.js","path":"/src/Test/Demo/demo.js"},{"id":"4751f754-f35f-4d74-99f3-ca0a85910f15","title":"index.js","path":"/src/Test/Demo/index.js"}]},{"id":"393dc6ff-351f-407e-89dc-ead3f26f2b86","title":"utils","path":"/utils","files":[{"id":"b3d0448d-72b1-4b06-b775-08bd4f82878c","title":"index.js","path":"/utils/index.js"}]},{"id":"afff7395-8f41-4726-ae8e-fbc67aeb2d4a","title":"cookies","path":"/utils/cookies","files":[{"id":"3da59936-84b9-45af-bd49-878172481038","title":"index.js","path":"/utils/cookies/index.js"}]},{"id":"935c6105-0178-4fa3-8b7e-480e4acf4d11","title":"helper","path":"/src/Helper","files":[{"id":"e3258f0c-707b-4ec3-ae81-eae3607e7e0a","title":"util.js","path":"/src/helper/util.js"},{"id":"61f152f2-e00b-4b72-97d4-b37c05ad8431","title":"demo.js","path":"/src/helper/demo.js"},{"id":"03330b9c-0abb-4b79-be5d-0a2bdb1b8ed9","title":"service.js","path":"/src/helper/service.js"}]},{"files":[{"id":"36ee9918-6e05-4185-8d66-bf7ecdd5ac4f","title":"index.py","path":"/components/MultiSelect/index.py"},{"id":"bf964141-aa9d-4c00-b78c-fd70b019e415","title":"index.scss","path":"/components/MultiSelect/index.scss"},{"id":"4e21b9f1-e3e6-4f92-ac99-2623937c4eb9","title":"index.vue","path":"/components/MultiSelect/index.vue"}],"id":"826f9491-00f0-4553-ab53-0d1c174bb928","title":"MultiSelect","path":"/components/MultiSelects"},{"files":[{"id":"77078494-62ed-4456-be0e-ed09b1a481ec","title":"main.js","path":"/dist/main.js"}],"id":"9b170b3e-3588-4d09-be0c-1fa392652e89","title":"dist","path":"/dist"},{"files":[],"id":"2532043f-71ae-4a1c-ae04-bff3361b7946","title":"node_modulfas","path":"/node_modulfas"},{"files":[{"id":"89c917ae-9c7a-41ee-9952-8c9965421947","title":"index.js","path":"/components/Hello/index.js"}],"id":"f0763a01-b47d-4129-bcf8-ec1a7992c9e3","title":"Hello","path":"/components/Hello"},{"files":[],"id":"d8cc68b6-de8e-433f-be26-33fbaa6c8cd7","title":"sfa","path":"/components/MultiSelect/sfa"},{"files":[{"id":"e4b120ff-5136-4d1f-a5cb-44b4ce32892c","title":"index.ts","path":"/HelloWorld/index.ts"}],"id":"fc26a324-dbdd-4a57-9e5a-eda4c7d19fb5","title":"HelloWorld","path":"/HelloWorld"}]

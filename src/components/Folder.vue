@@ -14,7 +14,7 @@ type FolderProps = {
 
 const folderStore = useFolder();
 
-const { selectedId, addType, expandedFolderIds, renameId, renameType } =
+const { selectedId, addType, expandedFolderIds, renameId, renameType, hover } =
   storeToRefs(folderStore);
 
 const {
@@ -104,15 +104,15 @@ const handleMouseDown = () => {
     @dragenter.stop="dragEnter"
     @dragleave.stop="dragOver = false"
     @drop="dragOver = false"
+    :style="{ '--gap': `${gap * 5}px` }"
   >
     <div v-if="renameType && renameId === folder.id">
-      <Input :gap="gap * 5" @on-enter="renameFolderOrFile(folder.id)" />
+      <Input :gap="`${gap * 5}px`" @on-enter="renameFolderOrFile(folder.id)" />
     </div>
-    <div v-else>
+    <template v-else>
       <div
         :id="`folder-${folder.id}`"
         :class="[styles.title, { [styles.selected]: folder.id === selectedId }]"
-        :style="{ paddingLeft: `${gap * 5}px` }"
         tabindex="-1"
         :draggable="isDragging && !addType && !renameType"
         :rename-id="renameId"
@@ -147,8 +147,12 @@ const handleMouseDown = () => {
         @on-delete="handleDelete('folder')"
         @on-copy-path="handleCopyPath(folder.path)"
       />
-    </div>
-    <Input v-if="showInput" :gap="gap * 5 + 5" @on-enter="createFolderOrFile" />
+    </template>
+    <Input
+      v-if="showInput"
+      :gap="`${gap * 5 + 5}px`"
+      @on-enter="createFolderOrFile"
+    />
     <Folder
       v-if="folder.subFolders !== undefined && isOpen"
       v-for="subFolder in folder.subFolders"
@@ -173,6 +177,16 @@ const handleMouseDown = () => {
       @on-copy-path="handleCopyPath"
       @on-enter="(fileId) => renameFolderOrFile(folder.id, fileId)"
     />
+    <Transition
+      :duration="10000"
+      :enter-active-class="styles.show_line"
+      :leave-active-class="styles.hide_line"
+    >
+      <div
+        v-if="folder.path !== '/' && (hover || selectedId === folder.id)"
+        :class="styles.line"
+      ></div>
+    </Transition>
   </div>
 </template>
 
@@ -185,11 +199,26 @@ const handleMouseDown = () => {
       border-color: #37373d;
     }
   }
+  .show_line {
+    animation: fadeIn 0.2s ease forwards;
+  }
+  .hide_line {
+    animation: fadeOut 0.2s ease forwards;
+  }
+  .line {
+    position: absolute;
+    top: 27px;
+    left: calc(var(--gap) + 7px);
+    height: calc(100% - 27px);
+    width: 1px;
+    background-color: #585858;
+  }
   .title {
     display: flex;
     align-items: center;
     gap: 5px;
     border: 1px solid transparent;
+    padding-left: var(--gap);
     user-select: none;
     cursor: pointer;
     &:is(.selected) {
@@ -200,7 +229,7 @@ const handleMouseDown = () => {
       background-color: #05395e;
       border: 1px solid #017fd4;
     }
-    &:hover:not(:focus) {
+    &:hover:not(:focus, .selected) {
       background-color: #2a2d2e;
     }
     > div {
@@ -221,6 +250,24 @@ const handleMouseDown = () => {
       width: 17px;
       height: 17px;
     }
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 </style>

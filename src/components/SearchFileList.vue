@@ -27,7 +27,6 @@ onUnmounted(() => {
 
 const handleKeyDown = (event: KeyboardEvent) => {
   if (!files.value || files.value.length === 0) return;
-  console.log("hello");
 
   if (event.key === "ArrowDown" || event.key === "ArrowUp") {
     if (event.key === "ArrowDown") {
