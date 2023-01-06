@@ -48,7 +48,7 @@ const handleMouseDown = (id: string) => {
       tabindex="-1"
       :id="`file-${id}`"
       :class="[styles.title, { [styles.selected]: id === selectedId }]"
-      :style="{ paddingLeft: `${gap}px` }"
+      :style="{ '--gap': `${gap}px` }"
       :key="id"
       :draggable="dragId === id && !addType && !renameType"
       @mousedown="handleMouseDown(id)"
@@ -75,6 +75,7 @@ const handleMouseDown = (id: string) => {
 .container {
   display: flex;
   flex-direction: column;
+  width: 100%;
   &:is(.drag_over) {
     background-color: #37373d;
     .title {
@@ -87,6 +88,7 @@ const handleMouseDown = (id: string) => {
     gap: 5px;
     border: 1px solid transparent;
     user-select: none;
+    padding: 0px 20px 0px var(--gap);
     cursor: pointer;
     &:is(.selected) {
       background-color: #37373d;

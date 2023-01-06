@@ -398,16 +398,20 @@ export const useFolder = defineStore("folder", {
     renameFolder(folderId: string) {
       let selectedFolder = this.folders.find(({ id }) => id === folderId);
       if (!selectedFolder) return;
+      let selectedPath = selectedFolder.path;
+      let index = selectedPath.split("/").length - 1;
       for (let folder of this.folders) {
-        if (folder.path.startsWith(selectedFolder.path)) {
-          let path = selectedFolder.path.split("/");
+        if (folder.path.startsWith(selectedPath)) {
+          let path = folder.path.split("/");
           let title = this.renameTitle;
-          path.splice(path.length - 1, 1, title);
+          path.splice(index, 1, title);
           folder.path = path.join("/");
-          folder.title = title;
+          if (folder.id === folderId) {
+            folder.title = title;
+          }
           folder.files.forEach((file) => {
             let filePath = file.path.split("/");
-            filePath.splice(filePath.length - 2, 1, title);
+            filePath.splice(index, 1, title);
             file.path = filePath.join("/");
           });
         }

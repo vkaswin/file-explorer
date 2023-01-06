@@ -142,9 +142,9 @@ const handleIcon = (addType: Icon) => {
     max-height: 100%;
     height: 100%;
     overflow: auto;
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    // &::-webkit-scrollbar {
+    //   display: none;
+    // }
     .overlay {
       position: fixed;
       top: 0px;

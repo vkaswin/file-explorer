@@ -194,6 +194,7 @@ const handleMouseDown = () => {
 <style lang="scss" module="styles">
 .container {
   position: relative;
+  width: fit-content;
   &:is(.drag_over) {
     background-color: #37373d;
     .title {
@@ -219,7 +220,7 @@ const handleMouseDown = () => {
     align-items: center;
     gap: 5px;
     border: 1px solid transparent;
-    padding-left: var(--gap);
+    padding: 0px 20px 0px var(--gap);
     user-select: none;
     cursor: pointer;
     &:is(.selected) {
