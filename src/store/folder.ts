@@ -309,28 +309,30 @@ export const useFolder = defineStore("folder", {
       let folders = JSON.parse(JSON.stringify(state.folders));
       return groupFoldersByPath(folders);
     },
-    selectedFolder: (state): Folder | undefined => {
-      if (!state.selectedId) return;
-      return state.folders.find(
+    selectedFolder: ({ selectedId, folders }): Folder | undefined => {
+      if (!selectedId) return;
+      return folders.find(
         ({ id, files }) =>
-          id === state.selectedId ||
-          files.findIndex((file) => file.id === state.selectedId) !== -1
+          id === selectedId ||
+          files.findIndex((file) => file.id === selectedId) !== -1
       );
     },
-    existingFolders: (state): string[] => {
-      if (!state.selectedId && !state.renameId) return [];
-      let folder = state.folders.find(
-        ({ id }) => id === (state.renameId || state.selectedId)
-      );
+    existingFolders: ({ selectedId, addType, folders, renameId }): string[] => {
+      let folder: Folder | undefined;
+      if (addType && !selectedId) {
+        folder = folders.find(({ path }) => path === "/");
+      } else {
+        folder = folders.find(({ id }) => id === (renameId || selectedId));
+      }
       if (!folder) return [];
       let folderPath: string;
       folderPath = folder.path;
-      if (state.renameId) {
+      if (renameId) {
         let keys = folder.path.split("/");
         keys.pop();
         folderPath = keys.join("/");
       }
-      return state.folders
+      return folders
         .filter(
           ({ path }) =>
             path !== folderPath &&
@@ -340,18 +342,23 @@ export const useFolder = defineStore("folder", {
         )
         .map(({ title }) => title.toLocaleLowerCase());
     },
-    existingFiles: (state): string[] => {
-      let folder = state.folders.find(
-        ({ files }) =>
-          files.findIndex(
-            (file) =>
-              file.id === (state.addType ? state.selectedId : state.renameId)
-          ) !== -1
-      );
+    existingFiles: ({ selectedId, addType, folders, renameId }): string[] => {
+      let folder: Folder | undefined;
+      if (addType && !selectedId) {
+        folder = folders.find(({ path }) => path === "/");
+      } else {
+        folder = folders.find(
+          ({ id, files }) =>
+            (addType && id === selectedId) ||
+            files.findIndex(
+              (file) => file.id === (addType ? selectedId : renameId)
+            ) !== -1
+        );
+      }
       if (!folder) return [];
       return folder.files
         .map(({ id, title }) =>
-          id === state.renameId ? "" : title.toLocaleLowerCase()
+          id === renameId ? "" : title.toLocaleLowerCase()
         )
         .filter(Boolean);
     },
@@ -362,9 +369,10 @@ export const useFolder = defineStore("folder", {
         files: [],
         id: generateRandomId(this.folders),
         title: this.title,
-        path: this.selectedFolder
-          ? `${this.selectedFolder.path}/${this.title}`
-          : `/${this.title}`,
+        path:
+          !this.selectedFolder || this.selectedFolder.path === "/"
+            ? `/${this.title}`
+            : `${this.selectedFolder.path}/${this.title}`,
       };
       this.folders.push(folder);
       this.toggleAddIcon();
@@ -374,9 +382,10 @@ export const useFolder = defineStore("folder", {
       let file: Files = {
         id: generateRandomId(this.folders),
         title: this.title,
-        path: this.selectedFolder
-          ? `${this.selectedFolder.path}/${this.title}`
-          : `/${this.title}`,
+        path:
+          !this.selectedFolder || this.selectedFolder.path === "/"
+            ? `/${this.title}`
+            : `${this.selectedFolder.path}/${this.title}`,
       };
       let index = this.folders.findIndex(({ id, path }) =>
         this.selectedFolder ? id === this.selectedFolder.id : path === "/"
