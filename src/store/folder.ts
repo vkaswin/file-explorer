@@ -311,7 +311,11 @@ export const useFolder = defineStore("folder", {
     },
     selectedFolder: (state): Folder | undefined => {
       if (!state.selectedId) return;
-      return state.folders.find(({ id }) => id === state.selectedId);
+      return state.folders.find(
+        ({ id, files }) =>
+          id === state.selectedId ||
+          files.findIndex((file) => file.id === state.selectedId) !== -1
+      );
     },
     existingFolders: (state): string[] => {
       if (!state.selectedId && !state.renameId) return [];
@@ -337,10 +341,12 @@ export const useFolder = defineStore("folder", {
         .map(({ title }) => title.toLocaleLowerCase());
     },
     existingFiles: (state): string[] => {
-      let folder = state.folders.find(({ id, files }) =>
-        state.addType
-          ? id === state.selectedId
-          : files.findIndex((file) => file.id === state.renameId) !== -1
+      let folder = state.folders.find(
+        ({ files }) =>
+          files.findIndex(
+            (file) =>
+              file.id === (state.addType ? state.selectedId : state.renameId)
+          ) !== -1
       );
       if (!folder) return [];
       return folder.files
@@ -373,7 +379,7 @@ export const useFolder = defineStore("folder", {
           : `/${this.title}`,
       };
       let index = this.folders.findIndex(({ id, path }) =>
-        this.selectedFolder ? id === this.selectedId : path === "/"
+        this.selectedFolder ? id === this.selectedFolder.id : path === "/"
       );
       if (index === -1) return;
       this.folders[index].files.push(file);

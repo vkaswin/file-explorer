@@ -50,7 +50,8 @@ const handleFolder = () => {
 const showInput = computed(() => {
   let isSelected =
     addType.value &&
-    (selectedId.value === folder.value.id ||
+    ((folder.value.path === "/" && selectedId.value === null) ||
+      selectedId.value === folder.value.id ||
       folder.value.files.findIndex(({ id }) => id === selectedId.value) !== -1);
   return isSelected;
 });
@@ -150,7 +151,7 @@ const handleMouseDown = () => {
     </template>
     <Input
       v-if="showInput"
-      :gap="`${gap * 5 + 5}px`"
+      :gap="`${folder.path === '/' ? 5 : gap * 5 + 10}px`"
       @on-enter="createFolderOrFile"
     />
     <Folder

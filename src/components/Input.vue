@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { toRefs, ref, onMounted, computed } from "vue";
+import { toRefs, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useFolder } from "@/store/folder";
 import { getFileIcon } from "@/utils";
@@ -11,12 +11,10 @@ type AddFolderProps = {
 const emit = defineEmits(["onEnter"]);
 
 const props = withDefaults(defineProps<AddFolderProps>(), {
-  gap: "5px",
+  gap: "0px",
 });
 
 const foldetStore = useFolder();
-
-const inputRef = ref<HTMLInputElement>();
 
 const { title, renameTitle, addType, renameType, error } =
   storeToRefs(foldetStore);
@@ -25,14 +23,19 @@ const { validateTitle } = foldetStore;
 
 const { gap } = toRefs(props);
 
-onMounted(() => {
-  if (!inputRef.value) return;
-  inputRef.value.focus();
-});
-
 const icon = computed(() =>
   getFileIcon(addType.value ? title.value : renameTitle.value)
 );
+
+const handleInput = (event: Event) => {
+  let { value } = event.target as HTMLInputElement;
+  if (addType.value !== null) {
+    title.value = value;
+  } else if (renameType.value !== null) {
+    renameTitle.value = value;
+  }
+  validateTitle();
+};
 </script>
 
 <template>
@@ -40,8 +43,8 @@ const icon = computed(() =>
     <svg
       v-if="addType === 'folder' || renameType === 'folder'"
       xmlns="http://www.w3.org/2000/svg"
-      width="12"
-      height="12"
+      width="15"
+      height="15"
       viewBox="0 0 16 16"
     >
       <path
@@ -56,24 +59,16 @@ const icon = computed(() =>
     />
     <div :class="styles.field">
       <input
-        v-if="addType !== null"
-        ref="inputRef"
+        v-if="addType !== null || renameType !== null"
         type="text"
-        v-model="title"
+        :value="
+          addType !== null ? title : renameTitle !== null ? renameTitle : ''
+        "
         :aria-invalid="error !== null"
         @keydown.enter="emit('onEnter')"
-        @input="validateTitle"
+        @input="handleInput"
         required
-      />
-      <input
-        v-if="renameType !== null"
-        ref="inputRef"
-        type="text"
-        v-model="renameTitle"
-        :aria-invalid="error !== null"
-        @keydown.enter="emit('onEnter')"
-        @input="validateTitle"
-        required
+        v-focus
       />
       <div :class="styles.error" v-if="error !== null" v-html="error"></div>
     </div>

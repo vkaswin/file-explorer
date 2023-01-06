@@ -96,7 +96,7 @@ const handleMouseDown = (id: string) => {
       background-color: #05395e;
       border: 1px solid #017fd4;
     }
-    &:hover:not(:focus) {
+    &:hover:not(:focus, .selected) {
       background-color: #2a2d2e;
     }
   }

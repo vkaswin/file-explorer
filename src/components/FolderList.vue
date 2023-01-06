@@ -91,11 +91,6 @@ const handleIcon = (addType: Icon) => {
       @mouseleave="setHover(false)"
     >
       <Folder v-for="folder in foldersList" :key="folder.id" :folder="folder" />
-      <Input
-        v-if="addType && selectedId === null && renameId === null"
-        gap="5px"
-        @on-enter="createFolderOrFile"
-      />
       <ScrollBar />
       <div
         :class="styles.overlay"

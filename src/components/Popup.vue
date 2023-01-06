@@ -1,14 +1,8 @@
 <script lang="ts" setup>
 import { debounce } from "@/utils";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 
 const inputValue = ref("");
-const searchRef = ref<HTMLInputElement>();
-
-onMounted(() => {
-  if (!searchRef.value) return;
-  searchRef.value.focus();
-});
 
 const handleChange = debounce((event: Event) => {
   let { value } = event.target as HTMLInputElement;
@@ -19,10 +13,10 @@ const handleChange = debounce((event: Event) => {
 <template>
   <div :class="styles.container">
     <input
-      ref="searchRef"
       type="text"
       placeholder="Search files by name"
       @input="handleChange"
+      v-focus
     />
     <slot :inputValue="inputValue"></slot>
     <slot name="hello"></slot>
