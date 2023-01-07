@@ -4,19 +4,16 @@ import { storeToRefs } from "pinia";
 import { useFolder } from "@/store/folder";
 import { Icon, Folder as FolderType } from "@/types/Folder";
 import Folder from "./Folder.vue";
-import Input from "./Input.vue";
-import ScrollBar from "./ScrollBar.vue";
+// import ScrollBar from "./ScrollBar.vue";
 
 const folderStore = useFolder();
-const { foldersList, selectedId, addType, renameId, renameType } =
-  storeToRefs(folderStore);
+const { foldersList, addType, renameType } = storeToRefs(folderStore);
 
 const {
   toggleAddIcon,
   handleDrop,
   setFolders,
   setExpandedFolderIds,
-  createFolderOrFile,
   setSelectedId,
   setHover,
 } = folderStore;
@@ -91,7 +88,7 @@ const handleIcon = (addType: Icon) => {
       @mouseleave="setHover(false)"
     >
       <Folder v-for="folder in foldersList" :key="folder.id" :folder="folder" />
-      <ScrollBar />
+      <!-- <ScrollBar /> -->
       <div
         :class="styles.overlay"
         v-if="addType !== null || renameType !== null"

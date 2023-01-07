@@ -4,7 +4,6 @@ import { Files } from "@/types/Folder";
 import { useFolder } from "@/store/folder";
 import { storeToRefs } from "pinia";
 import SearchFile from "./SearchFile.vue";
-import { file } from "@babel/types";
 
 type SearchFileListProps = {
   search: string;

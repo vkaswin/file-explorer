@@ -194,7 +194,7 @@ const handleMouseDown = () => {
 <style lang="scss" module="styles">
 .container {
   position: relative;
-  width: fit-content;
+  min-width: fit-content;
   &:is(.drag_over) {
     background-color: #37373d;
     .title {
