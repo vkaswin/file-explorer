@@ -52,7 +52,7 @@ const handleIcon = (addType: Icon) => {
 <template>
   <div ref="folderRef" :class="styles.container">
     <div :class="styles.header">
-      <b>Vue Folder Structure</b>
+      <b>File Explorer</b>
       <div :class="styles.add_icon">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -102,8 +102,6 @@ const handleIcon = (addType: Icon) => {
   display: flex;
   flex-direction: column;
   background-color: #252526;
-  --folder-width: 300px;
-  width: var(--folder-width);
   height: 100%;
   .header {
     display: flex;
