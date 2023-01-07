@@ -1,4 +1,4 @@
-# code-editor
+# file-explorer
 
 ## Project setup
 
